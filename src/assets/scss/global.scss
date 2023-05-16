@@ -1,0 +1,147 @@
+/* width */
+::-webkit-scrollbar {
+	width: 6px;
+	height: 6px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+	border-radius: 10px;
+	background: #ededed;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+	background: rgba(148, 148, 148, 0.6); 
+	border-radius: 10px;
+	transition: all .2s linear;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+	background: rgba(148, 148, 148, 0.8); 
+}
+
+.text-uppercase {
+	text-transform: uppercase;
+}
+
+.question-form {
+	border-left: 4px solid transparent !important;
+	transition: all .1s ease-in-out;
+}
+
+.question-form--focused {
+	border-left: 4px solid rgb(var(--v-theme-primary)) !important;
+}
+
+.no-input-details .v-input__details {
+	display: none;
+}
+
+.checkbox-sm {
+	margin: -13px 0;
+}
+
+.width-fit-content {
+	width: fit-content;
+}
+
+.view-wrapper {
+	height: calc(100vh - 24px);
+}
+
+.view-wrapper__inner {
+	height: 100%;
+	overflow-y: auto;
+}
+
+.overflow-hidden {
+	overflow: hidden;
+}
+
+@mixin question-grid {
+	table {
+		border-collapse: separate;
+		border-spacing: 0;
+		min-width: 700px;
+	}
+
+	td,
+	th {
+		margin: 0;
+		border-top-width: 0px;
+		text-align: center;
+	}
+
+	tr {
+		background: #f8f9fa;
+	}
+
+	tr:nth-child(odd) {
+		background: transparent;
+	}
+
+	/* Set the width of the container */
+	.table-container {
+		width: 100%;
+		overflow-x: auto;
+	}
+
+	.td-inner {
+		min-height: 57px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		& p {
+			width: 100%;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
+	}
+	.tr-placeholder {
+		background-color: transparent;
+	}
+	.placeholder {
+		min-height: 4px;
+	}
+	.td-content {
+		background: #f8f9fa;
+	}
+
+	/* Set the width of the table */
+	table {
+		width: auto;
+		table-layout: fixed;
+	}
+
+	/* Set the width of the first column */
+	th:first-child,
+	td:first-child {
+		position: sticky;
+		left: 0;
+		background-color: #fff;
+		z-index: 2;
+	}
+
+	/* Set the width of the last column */
+	th.pinned-right,
+	td.pinned-right {
+		position: sticky;
+		right: 0;
+		background-color: #fff;
+		z-index: 2;
+	}
+
+	/* Set the width of the middle columns */
+	th:not(:first-child):not(.pinned-right),
+	td:not(:first-child):not(.pinned-right) {
+		min-width: 200px;
+	}
+}
+
+.options-grid {
+	@include question-grid;
+}
