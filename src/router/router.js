@@ -9,30 +9,9 @@ import {
 	FormSubmitView,
 	FormsListView,
 	SubmissionsListView,
-} from '@/modules/Test/'
+} from '@/modules/Forms/'
 
-// const formRoutes = [
-// 	{
-// 		path: '/forms',
-// 		name: 'Forms',
-// 		component: FormsView,
-// 	},
-// 	{
-// 		path: '/new-form',
-// 		name: 'New Form',
-// 		component: NewFormView,
-// 	},
-// 	{
-// 		path: '/edit-form/:formId',
-// 		name: 'Edit Form',
-// 		component: EditFormView
-// 	},
-// 	{
-// 		path: '/submit',
-// 		name: 'SubmitForm',
-// 		component: FormSubmitView
-// 	}
-// ]
+
 const formRoutes = [
 	{
 		path: '/',
