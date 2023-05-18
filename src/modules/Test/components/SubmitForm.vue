@@ -7,15 +7,13 @@
 
 	<template v-else>
 		<template v-if="!isFormSubmitted">
-			<!-- <SubmitFormSimple
-				:formConfig="formSubmissionConfig"
-				@submit="submitSimpleForm"
-			/> -->
-			<SubmitFormBySteps
-				v-if="(isFormHasTimeRestriction && isReadyToStart) || !isFormHasTimeRestriction"
-				:formConfig="formSubmissionConfig"
-				@submit="submitSimpleForm"
-			/>
+			<template v-if="(isFormHasTimeRestriction && isReadyToStart) || !isFormHasTimeRestriction">
+				<component
+					:is="renderComponent"
+					:formConfig="formSubmissionConfig"
+					@submit="submitSimpleForm"
+				/>
+			</template>
 
 			<div
 				v-else
@@ -67,6 +65,17 @@ export default {
 			postForm,
 		} = useForm();
 
+		const renderComponent = computed(() => {
+			switch(formSubmissionConfig.value?.settings?.formView) {
+				case 'list':
+					return SubmitFormSimple;
+				case 'steps':
+					return SubmitFormBySteps;
+				default:
+					return SubmitFormSimple;
+			}
+		})
+
 		const isLoading = computed(() => loadingFlags.getForm || loadingFlags.postForm);
 
 		getFormForSubmission(props.formId);
@@ -83,6 +92,8 @@ export default {
 		}
 
 		return {
+			renderComponent,
+
 			isLoading,
 			formSubmissionConfig,
 			isFormSubmitted,

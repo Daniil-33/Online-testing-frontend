@@ -140,32 +140,16 @@
 						</div>
 
 						<v-switch
-							v-model="isGeneralTimeLimitActive"
 							style="max-width: fit-content;"
 							color="primary"
 							value="primary"
 							hide-details
+							:false-value="false"
+							:true-value="true"
+							:model-value="isGeneralTimeLimitActive"
+							@update:model-value="setIsGeneralTimeLimitActive"
 						></v-switch>
 					</div>
-
-					<!-- <div class="w-100 d-flex align-center justify-space-between mb-1">
-						<div class="w-100">
-							<p class="text-body-1">
-								Ограничить время выполнения каждого вопроса
-							</p>
-							<p class="text-body-2 w-75">
-								Если вы раннее выставили максимальное время заполнения формы, то оно будет сброшено.
-							</p>
-						</div>
-
-						<v-switch
-							v-model="isGeneralTimeLimitActive"
-							style="max-width: fit-content;"
-							color="primary"
-							value="primary"
-							hide-details
-						></v-switch>
-					</div> -->
 
 					<div
 						v-if="isGeneralTimeLimitActive"
@@ -192,11 +176,12 @@
 						</div>
 
 						<v-switch
-							v-model="isQuestionTimeLimitActive"
 							style="max-width: fit-content;"
 							color="primary"
 							value="primary"
 							hide-details
+							:model-value="isQuestionTimeLimitActive"
+							@update:model-value="setIsQuestionTimeLimitActive"
 						></v-switch>
 					</div>
 
@@ -236,7 +221,7 @@
 					</div>
 				</div>
 
-				<div class="mb-2">
+				<!-- <div class="mb-2">
 					<div class="w-100 d-flex align-center justify-space-between">
 						<div class="w-100">
 							<p class="text-body-1">
@@ -264,7 +249,7 @@
 							:disabled="isQuestionTimeLimitActive"
 						></v-radio>
 					</v-radio-group>
-				</div>
+				</div> -->
 
 				<div class="mb-2">
 					<div class="w-100 d-flex align-center justify-space-between">
@@ -280,7 +265,7 @@
 
 					<v-text-field
 						style="max-width: 300px;"
-						label="Текст после отправки формы"
+						label=""
 						variant="underlined"
 						:model-value="settings.confirmText"
 						@update:model-value="updateSettings('confirmText', $event)"
@@ -423,7 +408,6 @@
 <script>
 import { ref, watch, onMounted } from 'vue';
 
-import { VTimePicker } from '@/modules/Shared/'
 
 export default {
 	name: 'FormSettings',
@@ -433,71 +417,80 @@ export default {
 			default: () => ({}),
 		}
 	},
-	components: {
-		'v-time-picker': VTimePicker,
-	},
 	emits: {
 		'reset:questionTimeLimit': null,
 		'update:settings': null,
 	},
 	setup(props, { emit }) {
-		const isGeneralTimeLimitActive = ref(false);
-		const isQuestionTimeLimitActive = ref(false);
+		const isGeneralTimeLimitActive = ref(props.settings.generalTimeLimit > 0);
+		const isQuestionTimeLimitActive = ref(props.settings.questionDefaultTimeLimit > 0);
 
-		watch(() => isGeneralTimeLimitActive.value, () => {
-			if (!isGeneralTimeLimitActive.value) {
-				// props.settings.setGeneralTimeLimit(0);
-				updateSettings('generalTimeLimit', 0);
-			} else {
-				isQuestionTimeLimitActive.value = false;
-				// props.settings.setQuestionDefaultTimeLimit(0);
-				updateSettings('questionDefaultTimeLimit', 0);
-			}
-		})
+		// watch(() => isGeneralTimeLimitActive.value, () => {
+		// 	if (!isGeneralTimeLimitActive.value) {
+		// 		updateSettings('generalTimeLimit', 0);
+		// 		updateSettings('formView', 'steps');
+		// 	} else {
+		// 		isQuestionTimeLimitActive.value = false;
 
-		watch(() => isQuestionTimeLimitActive.value, () => {
-			if (!isQuestionTimeLimitActive.value) {
-				// props.settings.setQuestionDefaultTimeLimit(0);
-				updateSettings('questionDefaultTimeLimit', 0);
+		// 		updateSettings('questionDefaultTimeLimit', 0);
+		// 		updateSettings('formView', 'list');
+		// 	}
+		// })
 
-				// emit('reset:questionTimeLimit')
-			} else {
-				isGeneralTimeLimitActive.value = false;
-				// props.settings.setGeneralTimeLimit(0);
-				updateSettings('generalTimeLimit', 0);
+		// watch(() => isQuestionTimeLimitActive.value, () => {
+		// 	if (!isQuestionTimeLimitActive.value) {
+		// 		updateSettings('questionDefaultTimeLimit', 0);
+		// 		updateSettings('formView', 'list');
+		// 	} else {
+		// 		isGeneralTimeLimitActive.value = false;
 
-				// props.settings.setFormView('steps')
-				updateSettings('formView', 'steps')
-			}
-		})
+		// 		updateSettings('generalTimeLimit', 0);
+		// 		updateSettings('formView', 'steps');
+		// 	}
+		// })
 
 		const setGeneralTimeLimit = (value) => {
-			// props.settings.setGeneralTimeLimit(value)
 			updateSettings('generalTimeLimit', value);
 		}
 
 		const setQuestionDefaultTimeLimit = (value) => {
-			// props.settings.setQuestionDefaultTimeLimit(value)
 			updateSettings('questionDefaultTimeLimit', value);
+		}
+
+		const setIsGeneralTimeLimitActive = (value) => {
+			isGeneralTimeLimitActive.value = value;
+
+			if (value) {
+				isQuestionTimeLimitActive.value = false;
+
+				updateSettings('questionDefaultTimeLimit', 0);
+				updateSettings('formView', 'list');
+			}
+		}
+
+		const setIsQuestionTimeLimitActive = (value) => {
+			isQuestionTimeLimitActive.value = value;
+
+			if (value) {
+				isGeneralTimeLimitActive.value = false;
+
+				updateSettings('generalTimeLimit', 0);
+				updateSettings('formView', 'steps');
+			}
 		}
 
 		const updateSettings = (key, value) => {
 			emit('update:settings', { [key]: value })
 		}
 
-		onMounted(() => {
-			watch(() => props.settings, () => {
-				isGeneralTimeLimitActive.value = props.settings.generalTimeLimit > 0;
-				isQuestionTimeLimitActive.value = props.settings.questionDefaultTimeLimit > 0;
-			}, { immediate: true, deep: true });
-		})
-
 		return {
 			isGeneralTimeLimitActive,
 			setGeneralTimeLimit,
+			setIsGeneralTimeLimitActive,
 
 			isQuestionTimeLimitActive,
 			setQuestionDefaultTimeLimit,
+			setIsQuestionTimeLimitActive,
 
 			updateSettings,
 		}

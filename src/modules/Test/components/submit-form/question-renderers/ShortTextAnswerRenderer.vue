@@ -11,7 +11,7 @@
 	</div>
 </template>
 <script>
-import { onBeforeMount } from 'vue'
+import { onBeforeMount, computed } from 'vue'
 
 export default {
 	name: 'ShortTextAnswerRenderer',
@@ -34,11 +34,6 @@ export default {
 	},
 	expose: [ 'isAnswered' ],
 	setup(props, { emit }) {
-		const touchedByValidator = ref(false)
-		const requireError = computed(() => {
-			return touchedByValidator.value && !isAnswerFilled.value
-		})
-
 		const isAnswerFilled = computed(() => {
 			return props.modelValue !== ''
 		})

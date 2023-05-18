@@ -18,11 +18,12 @@ app.use(router)
 app.use(i18n)
 app.use(createPinia())
 
-import { VNumberField } from './modules/Shared/'
+import { VNumberField, VTimePicker } from './modules/Shared/'
 import UIProgressBar from '@/components/ui/UIProgressBar.vue'
 import UILoader from '@/components/ui/UILoader.vue'
 
 app.component('v-number-field', VNumberField)
+app.component('v-time-picker', VTimePicker)
 app.component('ui-progress-bar', UIProgressBar)
 app.component('ui-loader', UILoader)
 

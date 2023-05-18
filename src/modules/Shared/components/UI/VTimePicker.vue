@@ -2,9 +2,9 @@
 	<vue-timepicker
 		:format="format"
 		:drop-direction="dropDirection"
+		:key="refreshKey"
 		:model-value="value"
 		@update:model-value="onTimeChange"
-		@close="onClose"
 	></vue-timepicker>
 </template>
 <script>
@@ -37,10 +37,6 @@ export default {
 	setup(props, { emit }) {
 		const value = ref(props.modelValue);
 
-		watch(() => props.modelValue, (val) => {
-			value.value = parseObjectFromMilliseconds(val);
-		});
-
 		const parseMillisecondsFromObject = (time) => {
 			let milliseconds = 0;
 
@@ -59,16 +55,24 @@ export default {
 			return milliseconds;
 		}
 
+		const sanitazeValue = (value) => {
+			if (value < 10) {
+				return `0${value}`;
+			}
+
+			return value;
+		}
+
 		const parseObjectFromMilliseconds = (milliseconds) => {
 			const time = {};
 
-			time.HH = Math.floor(milliseconds / (60 * 60 * 1000));
+			time.HH = sanitazeValue(Math.floor(milliseconds / (60 * 60 * 1000)));
 			milliseconds -= time.HH * 60 * 60 * 1000;
 
-			time.mm = Math.floor(milliseconds / (60 * 1000));
+			time.mm = sanitazeValue(Math.floor(milliseconds / (60 * 1000)));
 			milliseconds -= time.mm * 60 * 1000;
 
-			time.ss = Math.floor(milliseconds / 1000);
+			time.ss = sanitazeValue(Math.floor(milliseconds / 1000));
 			milliseconds -= time.ss * 1000;
 
 			return time;
@@ -78,8 +82,13 @@ export default {
 			emit('update:modelValue', parseMillisecondsFromObject(time));
 		}
 
+		watch(() => props.modelValue, (val) => {
+			value.value = parseObjectFromMilliseconds(val);
+		}, { immediate: true });
+
 		return {
 			value,
+			timepicker,
 			onTimeChange,
 		}
 	}

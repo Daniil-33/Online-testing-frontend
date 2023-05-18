@@ -40,7 +40,7 @@
 	</div>
 </template>
 <script>
-import { onBeforeMount, ref, computed } from 'vue'
+import { onBeforeMount, computed } from 'vue'
 
 export default {
 	name: 'MultipleOptionsAnswerRenderer',
@@ -67,20 +67,6 @@ export default {
 	},
 	expose: [ 'isAnswered' ],
 	setup(props, { emit }) {
-		const touchedByValidator = ref(false)
-		const requireError = computed(() => {
-			return touchedByValidator.value && !isAnswerFilled.value
-		})
-
-		const isAnswerFilled = computed(() => {
-			return props.modelValue.selected.length > 0
-		})
-
-		const isAnswered = () => {
-			touchedByValidator.value = true
-			return isAnswerFilled.value
-		}
-
 		const makeModelValueEmptyStructure = () => {
 			return {
 				selected: [],
@@ -119,7 +105,6 @@ export default {
 		return {
 			setValue,
 			setCustomAnswerText,
-			isAnswered
 		}
 	}
 }

@@ -5,14 +5,13 @@
 			variant="underlined"
 			color="primary"
 			:model-value="modelValue"
-			:error="requireError"
 			:disabled="isViewingAnswer"
 			@update:model-value="setValue"
 		/>
 	</div>
 </template>
 <script>
-import { onBeforeMount, computed, ref } from 'vue'
+import { onBeforeMount, computed } from 'vue'
 
 export default {
 	name: 'DetailedTextAnswerRenderer',
@@ -35,14 +34,6 @@ export default {
 	},
 	expose: [ 'isAnswered' ],
 	setup(props, { emit }) {
-		const isAnswerFilled = computed(() => {
-			return props.modelValue !== ''
-		})
-
-		const isAnswered = () => {
-			return isAnswerFilled.value
-		}
-
 		const makeModelValueEmptyStructure = () => {
 			return ''
 		}
@@ -61,8 +52,6 @@ export default {
 
 		return {
 			setValue,
-			isAnswered,
-			requireError,
 		}
 	}
 }

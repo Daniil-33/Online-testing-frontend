@@ -38,7 +38,7 @@
 	</v-radio-group>
 </template>
 <script>
-import { onBeforeMount } from 'vue'
+import { onBeforeMount, computed } from 'vue'
 
 export default {
 	name: 'SingleOptionAnswerRenderer',
@@ -65,20 +65,6 @@ export default {
 	},
 	expose: [ 'isAnswered' ],
 	setup(props, { emit }) {
-		const touchedByValidator = ref(false)
-		const requireError = computed(() => {
-			return touchedByValidator.value && !isAnswerFilled.value
-		})
-
-		const isAnswerFilled = computed(() => {
-			return props.modelValue.selected !== ''
-		})
-
-		const isAnswered = () => {
-			touchedByValidator.value = true
-			return isAnswerFilled.value
-		}
-
 		const makeModelValueEmptyStructure = () => {
 			return {
 				selected: '',
@@ -111,7 +97,6 @@ export default {
 		return {
 			setValue,
 			setCustomAnswerText,
-			isAnswered,
 		}
 	}
 }

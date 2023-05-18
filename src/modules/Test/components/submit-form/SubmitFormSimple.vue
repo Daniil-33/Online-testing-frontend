@@ -31,7 +31,10 @@
 			v-for="question in formConfig.questions"
 			:key="question.id"
 		>
-			<div class="w-100 mb-2 bg-white px-3 py-3 rounded">
+			<div
+				class="w-100 mb-2 bg-white px-3 py-3 rounded question-card"
+				:class="{ 'question-card--error': errors?.[question.id]?.required && isTouchedByValidator }"
+			>
 				<p class="text-subtitle-1">
 					{{ question.title }}
 
@@ -51,7 +54,7 @@
 		<div>
 			<v-btn
 				color="primary"
-				@click="submitForm"
+				@click="submit"
 			>
 				Отправить
 			</v-btn>
@@ -110,9 +113,17 @@ export default {
 		const {
 			isFormHasAnyTimeLimit,
 			values,
+			errors,
+			isTouchedByValidator,
+
+			validateAllAnswers,
 			makeValuesStructure,
 			submitForm,
 		} = useFormSubmitManager(props, { emit })
+
+		const submit = (isTimeOut = false) => {
+			submitForm((formValues) => emit('submit', formValues), isTimeOut)
+		}
 
 		onBeforeMount(() => {
 			makeValuesStructure()
@@ -126,25 +137,31 @@ export default {
 		let startedAt = null
 
 		onMounted(() => {
-			startedAt = Date.now()
+			if (isFormHasAnyTimeLimit.value) {
+				startedAt = Date.now()
 
-			setTimeout(() => {
-				isTimeOut.value = true
+				setTimeout(() => {
+					isTimeOut.value = true
 
-				clearInterval(timerInterval)
-			}, props.formConfig.settings.generalTimeLimit)
+					clearInterval(timerInterval)
+				}, props.formConfig.settings.generalTimeLimit)
 
-			timerInterval = setInterval(() => {
-				timerValue.value = formatTimerValue(props.formConfig.settings.generalTimeLimit - (Date.now() - startedAt))
-				timeProgress.value = Math.ceil((Date.now() - startedAt) / props.formConfig.settings.generalTimeLimit * 100)
-			}, 1000)
+				timerInterval = setInterval(() => {
+					timerValue.value = formatTimerValue(props.formConfig.settings.generalTimeLimit - (Date.now() - startedAt))
+					timeProgress.value = Math.ceil((Date.now() - startedAt) / props.formConfig.settings.generalTimeLimit * 100)
+				}, 1000)
+			}
 		})
 
 		watch(() => isTimeOut.value, (isTimeOut) => {
 			if (isTimeOut) {
-				submitForm()
+				submit(true)
 			}
 		})
+
+		watch(() => values.value, () => {
+			isTouchedByValidator.value && validateAllAnswers(true)
+		}, { deep: true })
 
 		return {
 			values,
@@ -153,7 +170,10 @@ export default {
 			timerValue,
 			timeProgress,
 
-			submitForm,
+			errors,
+			isTouchedByValidator,
+
+			submit,
 		}
 	}
 }
@@ -163,5 +183,14 @@ export default {
 	top: -12px !important;
 	left: -12px !important;
 	width: 103%;
+}
+
+.question-card {
+	border: 1px solid transparent;
+	transition: all .1s linear;
+}
+
+.question-card--error {
+	border: 1px solid red;
 }
 </style>

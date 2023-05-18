@@ -1,11 +1,4 @@
 <template>
-	<ui-progress-bar
-		v-if="isFormHasAnyTimeLimit && isGeneralTimeLimit"
-		parentSelector=".form-submit"
-		customClass="global-loader-custom-spacing"
-		:progress="timeProgress"
-	/>
-
 	<div
 		class="d-flex flex-column pb-5"
 		style="max-width: 1000px; margin: 0 auto;"
@@ -13,13 +6,6 @@
 		<div class="w-100 mb-2 bg-white px-3 py-3 rounded">
 			<div class="w-100 d-flex align-center justify-space-between">
 				<h3>{{ formConfig.title }}</h3>
-
-				<p
-					v-if="isFormHasAnyTimeLimit && isGeneralTimeLimit"
-					class="text-subtitle-1"
-				>
-					{{ timerValue }}
-				</p>
 			</div>
 
 			<p
@@ -31,24 +17,25 @@
 		</div>
 
 		<div
-			:class="{ 'mb-2 bg-white rounded overflow-hidden' : isFormHasAnyTimeLimit && !isGeneralTimeLimit }"
+			class="mb-2 bg-white rounded overflow-hidden question-card"
+			:class="{
+				'question-card--error': currentQuestionRequiredError && isTouchedByValidator
+			}"
 		>
-			<div v-if="isFormHasAnyTimeLimit && !isGeneralTimeLimit">
+			<div v-if="isFormHasAnyTimeLimit">
 				<ui-progress-bar
 					customClass="global-loader-custom-spacing"
 					:progress="timeProgress"
 				/>
 			</div>
 
-			<div :class="{ 'px-3 py-3': isFormHasAnyTimeLimit && !isGeneralTimeLimit }">
+			<div class="px-3 py-3">
 				<template
 					v-for="(question, index) in formConfig.questions"
 					:key="question.id"
 				>
 					<div
 						v-show="currentQuestionIndex === index"
-						class="w-100 mb-2 bg-white px-3 py-3 rounded"
-						:class="{ 'mb-2 bg-white px-3 py-3 rounded': isGeneralTimeLimit }"
 					>
 						<div class="w-100 d-flex align-center justify-space-between">
 							<p class="text-subtitle-1">
@@ -92,7 +79,7 @@
 			<v-btn
 				v-if="currentQuestionIndex < formConfig.questions.length - 1 "
 				color="primary"
-				@click="nextQuestion"
+				@click="nextQuestion(false)"
 			>
 				Следующий
 			</v-btn>
@@ -159,19 +146,25 @@ export default {
 		const {
 			isFormHasAnyTimeLimit,
 			values,
+			errors,
+			isTouchedByValidator,
+
+			validateAnswer,
 			makeValuesStructure,
+			touchValidation,
+			unTouchValidation,
 			submitForm,
 		} = useFormSubmitManager(props, { emit })
+
+		const currentQuestionRequiredError = computed(() => {
+			const question = props.formConfig.questions[currentQuestionIndex.value]
+
+			return errors.value?.[question.id]?.required
+		})
 
 		const currentQuestionIndex = ref(0)
 		let currentQuestionTimeout = null
 		let currentQuestionInterval = null
-
-		const nextQuestion = () => {
-			currentQuestionIndex.value++
-
-			[currentQuestionTimeout, currentQuestionInterval] = handleNextQuestionWithTimeLimit(currentQuestionTimeout, currentQuestionInterval)
-		}
 
 		const handleNextQuestionWithTimeLimit = (currentTimeout, currentInterval) => {
 			if (currentQuestionIndex.value > props.formConfig.questions.length - 1) return [ null, null ]
@@ -184,9 +177,9 @@ export default {
 
 			let newTimeout = setTimeout(() => {
 				if (currentQuestionIndex.value === props.formConfig.questions.length - 1) {
-					submitForm()
+					submit(true)
 				} else {
-					nextQuestion()
+					nextQuestion(true)
 				}
 			}, props.formConfig.settings.questionDefaultTimeLimit)
 
@@ -198,8 +191,29 @@ export default {
 			return [ newTimeout, newInterval ]
 		}
 
+		const nextQuestion = (isTimeOut) => {
+			if (!isTimeOut) {
+				validateAnswer(
+					props.formConfig.questions[currentQuestionIndex.value].id,
+					props.formConfig.settings.isAllQuestionsRequired
+				)
+				touchValidation()
+
+				if (errors.value[props.formConfig.questions[currentQuestionIndex.value].id]?.required) return
+			}
+
+			unTouchValidation()
+			currentQuestionIndex.value++
+
+			[currentQuestionTimeout, currentQuestionInterval] = handleNextQuestionWithTimeLimit(currentQuestionTimeout, currentQuestionInterval)
+		}
+
 		const prevQuestion = () => {
 			currentQuestionIndex.value--
+		}
+
+		const submit = (isTimeOut) => {
+			submitForm((formValues) => emit('submit', formValues), isTimeOut)
 		}
 
 		onBeforeMount(() => {
@@ -233,19 +247,30 @@ export default {
 
 		watch(() => isTimeOut.value, (isTimeOut) => {
 			if (isTimeOut) {
-				// submitForm()
+				submit(true)
 			}
 		})
+
+		watch(() => values.value, () => {
+			if (isTouchedByValidator.value) {
+				validateAnswer(
+					props.formConfig.questions[currentQuestionIndex.value].id,
+					props.formConfig.settings.isAllQuestionsRequired
+				)
+			}
+		}, { deep: true })
 
 		return {
 			questionTypesComponentReference,
 			isFormHasAnyTimeLimit,
-			isGeneralTimeLimit,
+			currentQuestionRequiredError,
 
 			timerValue,
 			timeProgress,
 
 			values,
+			errors,
+			isTouchedByValidator,
 			currentQuestionIndex,
 			nextQuestion,
 			prevQuestion,
@@ -261,5 +286,14 @@ export default {
 }
 .component-fade-enter, .component-fade-leave-to {
   opacity: 0;
+}
+
+.question-card {
+	border: 1px solid transparent;
+	transition: all .1s linear;
+}
+
+.question-card--error {
+	border: 1px solid red;
 }
 </style>
