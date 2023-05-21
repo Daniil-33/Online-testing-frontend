@@ -16,6 +16,7 @@ const createQuestion = (questionReference={}) => {
 		content: {},
 		answerSettings: {},
 		isRequired: false,
+		timeLimit: 0,
 
 		...questionReference,
 

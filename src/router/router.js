@@ -9,6 +9,7 @@ import {
 	FormSubmitView,
 	FormsListView,
 	SubmissionsListView,
+	SubmissionReviewView,
 } from '@/modules/Forms/'
 
 
@@ -39,13 +40,18 @@ const formRoutes = [
 			},
 			{
 				path: 'submit/:id',
-				name: 'SubmitForm',
+				name: 'Submit Form',
 				component: FormSubmitView
 			},
 			{
 				path: 'submissions',
 				name: 'Submissions List',
 				component: SubmissionsListView,
+			},
+			{
+				path: 'submissions/:id',
+				name: 'Submission Review',
+				component: SubmissionReviewView,
 			}
 		]
 	},

@@ -1,8 +1,8 @@
 <template>
-	<div class="submission-list">
-		<v-card class="px-5 py-5 mt-3">
+	<div class="submissions-list">
+		<v-card class="px-5 py-5 submissions-list__items-wrapper">
 			<template v-if="isLoading">
-				<div class="w-100 px-3 py-3 d-flex justify-center">
+				<div class="h-100 w-100 px-3 py-3 d-flex justify-center align-center">
 					<v-progress-circular
 						indeterminate
 						color="primary"
@@ -12,7 +12,7 @@
 			<template v-else>
 				<div
 					v-if="!isEmptyList"
-					class="submission-list__items"
+					class="submissions-list__items"
 				>
 					<SubmissionsListItem
 						v-for="submission in submissionsList"
@@ -31,28 +31,29 @@
 </template>
 
 <script>
-import SubmissionsListItem from './submissions-list/SubmissionsListItem.vue';
+import SubmissionsListItem from './submissions-list/SubmissionListItem.vue';
+
 import { computed } from 'vue'
 import useSubmissions from '../composables/useSubmissions'
 
 export default {
 	name: 'SubmissionsList',
 	components: {
-		SubmissionsListItem
+		SubmissionsListItem,
 	},
 	setup(props) {
 		const {
-			getSubmissionsList,
+			getSubmissions,
 			submissionsList,
 			loadingFlags
 		} = useSubmissions()
 
+		const isLoading = computed(() => loadingFlags.getSubmission)
 		const isEmptyList = computed(() => {
-			return props.submissionsList.length === 0
+			return submissionsList.value.length === 0
 		})
-		const isLoading = computed(() => loadingFlags.getSubmissions)
 
-		getSubmissionsList()
+		getSubmissions()
 
 		return {
 			isEmptyList,
@@ -62,6 +63,20 @@ export default {
 	},
 }
 </script>
-<style scoped>
+<style scoped lang="scss">
+.submissions-list {
+	&__items {
+		&-wrapper {
+			height: calc(100vh - 25px);
+			overflow-y: auto;
+		}
 
+		display: flex;
+		flex-direction: column;
+
+		& > *:not(:first-child) {
+			margin-top: 12px;
+		}
+	}
+}
 </style>

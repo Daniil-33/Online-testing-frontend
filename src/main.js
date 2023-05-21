@@ -20,7 +20,7 @@ app.use(createPinia())
 
 import UIProgressBar from '@/components/ui/UIProgressBar.vue'
 import UILoader from '@/components/ui/UILoader.vue'
-import UITimePicker from '@/components/ui/inputs/UITimePicker.vue'
+import UITimePicker from '@/components/ui/inputs/UiTimePicker.vue'
 import UINumberField from '@/components/ui/inputs/UINumberField.vue'
 
 app.component('ui-time-picker', UITimePicker)

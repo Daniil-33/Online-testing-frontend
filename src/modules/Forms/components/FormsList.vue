@@ -6,9 +6,9 @@
 			</div>
 		</v-card>
 
-		<v-card class="px-5 py-5 mt-3">
+		<v-card class="px-5 py-5 mt-3 forms-list__items-wrapper">
 			<template v-if="isLoading">
-				<div class="w-100 px-3 py-3 d-flex justify-center">
+				<div class="h-100 w-100 px-3 py-3 d-flex justify-center align-center">
 					<v-progress-circular
 						indeterminate
 						color="primary"
@@ -72,6 +72,11 @@ export default {
 <style scoped lang="scss">
 .forms-list {
 	&__items {
+		&-wrapper {
+			height: calc(100vh - 89px);
+			overflow-y: auto;
+		}
+
 		display: flex;
 		flex-direction: column;
 

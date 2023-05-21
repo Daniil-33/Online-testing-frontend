@@ -24,20 +24,33 @@
 						></v-btn>
 					</template>
 
-					<FormContextMenu />
+					<FormContextMenu
+						:id="form._id"
+						@delete="onFormDelete"
+					/>
 				</v-menu>
 			</div>
 		</div>
 	</div>
+
+	<ConfirmDeleteModal
+		v-model="isDeleteModalOpen"
+		:payload="confirmDeletePayload"
+		@confirm="onConfirmDelete"
+	/>
 </template>
 <script>
 import FormContextMenu from './FormContextMenu.vue';
+import ConfirmDeleteModal from '@/components/modals/ConfirmDeleteModal.vue';
+
 import { formatDate } from '@/helpers/dateHelper'
+import { ref } from 'vue'
 
 export default {
 	name: 'FormListItem',
 	components: {
-		FormContextMenu
+		FormContextMenu,
+		ConfirmDeleteModal
 	},
 	props: {
 		form: {
@@ -51,9 +64,31 @@ export default {
 			}
 		}
 	},
-	setup() {
+	emits: ['deleteForm'],
+	setup(props, { emit }) {
+		const confirmDeletePayload = {
+			title: 'Delete Form',
+			text: 'Are you sure you want to delete this form?'
+		}
+
+		const isDeleteModalOpen = ref(false)
+
+		const onFormDelete = () => {
+			isDeleteModalOpen.value = true
+		}
+
+		const onConfirmDelete = () => {
+			isDeleteModalOpen.value = false
+
+			emit('deleteForm', props.form._id)
+		}
+
 		return {
-			formatDate
+			isDeleteModalOpen,
+			confirmDeletePayload,
+			formatDate,
+			onFormDelete,
+			onConfirmDelete
 		}
 	}
 }

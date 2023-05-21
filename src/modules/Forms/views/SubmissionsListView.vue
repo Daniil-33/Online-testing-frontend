@@ -1,9 +1,15 @@
 <template>
-	<div class="px-5 py-5">
+	<div>
+		<SubmissionsList />
 	</div>
 </template>
 <script>
+import SubmissionsList from '../components/SubmissionsList.vue';
+
 export default {
 	name: 'SubmissionsListView',
+	components: {
+		SubmissionsList
+	},
 }
 </script>

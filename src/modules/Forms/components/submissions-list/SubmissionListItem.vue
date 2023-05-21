@@ -1,15 +1,15 @@
 <template>
 	<div
 		class="submission-list-item"
-		@click="$router.push({ name: 'Edit Form', params: { id: form._id } })"
+		@click="$router.push({ name: 'Submission Review', params: { id: submission._id } })"
 	>
 		<div class="submission-list-item__right">
-			<v-icon color="primary" icon="mdi-format-list-bulleted"></v-icon>
+			<v-icon color="primary" icon="mdi-file-check-outline"></v-icon>
 
-			<p class="text-h6 ml-2">{{ form.title }}</p>
+			<p class="text-h6 ml-2">{{ submission.formMetaData.title }}</p>
 		</div>
 		<div class="submission-list-item__left">
-			<p class="form-date text-muted">{{ formatDate(form.createdOn) }}</p>
+			<p class="form-date text-muted">{{ formatDate(submission.createdOn) }}</p>
 
 			<div @click.stop>
 				<v-menu
@@ -24,7 +24,9 @@
 						></v-btn>
 					</template>
 
-					<SubmissionContextMenu />
+					<SubmissionContextMenu
+						:id="submission._id"
+					/>
 				</v-menu>
 			</div>
 		</div>

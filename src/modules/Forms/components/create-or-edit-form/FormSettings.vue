@@ -155,11 +155,11 @@
 						v-if="isGeneralTimeLimitActive"
 						class="d-flex align-center justify-space-start"
 					>
-						<ui-time-picker
+						<!-- <ui-time-picker
 							:dropDirection="'down'"
 							:model-value="settings.generalTimeLimit"
 							@update:model-value="setGeneralTimeLimit"
-						/>
+						/> -->
 					</div>
 				</div>
 
@@ -425,30 +425,6 @@ export default {
 		const isGeneralTimeLimitActive = ref(props.settings.generalTimeLimit > 0);
 		const isQuestionTimeLimitActive = ref(props.settings.questionDefaultTimeLimit > 0);
 
-		// watch(() => isGeneralTimeLimitActive.value, () => {
-		// 	if (!isGeneralTimeLimitActive.value) {
-		// 		updateSettings('generalTimeLimit', 0);
-		// 		updateSettings('formView', 'steps');
-		// 	} else {
-		// 		isQuestionTimeLimitActive.value = false;
-
-		// 		updateSettings('questionDefaultTimeLimit', 0);
-		// 		updateSettings('formView', 'list');
-		// 	}
-		// })
-
-		// watch(() => isQuestionTimeLimitActive.value, () => {
-		// 	if (!isQuestionTimeLimitActive.value) {
-		// 		updateSettings('questionDefaultTimeLimit', 0);
-		// 		updateSettings('formView', 'list');
-		// 	} else {
-		// 		isGeneralTimeLimitActive.value = false;
-
-		// 		updateSettings('generalTimeLimit', 0);
-		// 		updateSettings('formView', 'steps');
-		// 	}
-		// })
-
 		const setGeneralTimeLimit = (value) => {
 			updateSettings('generalTimeLimit', value);
 		}
@@ -460,22 +436,28 @@ export default {
 		const setIsGeneralTimeLimitActive = (value) => {
 			isGeneralTimeLimitActive.value = value;
 
+			updateSettings('questionDefaultTimeLimit', 0);
+			updateSettings('generalTimeLimit', 0);
+			updateSettings('formView', 'list');
+
 			if (value) {
 				isQuestionTimeLimitActive.value = false;
 
-				updateSettings('questionDefaultTimeLimit', 0);
-				updateSettings('formView', 'list');
 			}
 		}
 
 		const setIsQuestionTimeLimitActive = (value) => {
 			isQuestionTimeLimitActive.value = value;
 
+			updateSettings('generalTimeLimit', 0);
+			updateSettings('questionDefaultTimeLimit', 0);
+
 			if (value) {
 				isGeneralTimeLimitActive.value = false;
 
-				updateSettings('generalTimeLimit', 0);
 				updateSettings('formView', 'steps');
+			} else {
+				updateSettings('formView', 'list');
 			}
 		}
 

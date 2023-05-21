@@ -87,7 +87,7 @@
 			<v-btn
 				v-else
 				color="primary"
-				@click="submitForm"
+				@click="submit(false)"
 			>
 				Отправить
 			</v-btn>
@@ -275,7 +275,7 @@ export default {
 			nextQuestion,
 			prevQuestion,
 
-			submitForm,
+			submit,
 		}
 	}
 }

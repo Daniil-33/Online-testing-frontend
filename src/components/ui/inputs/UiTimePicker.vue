@@ -32,7 +32,7 @@ export default {
 		VueTimepicker,
 	},
 	emits: {
-		'update:modelValue': null,
+		'update:model-value': null,
 	},
 	setup(props, { emit }) {
 		const value = ref(props.modelValue);
@@ -79,7 +79,7 @@ export default {
 		}
 
 		const onTimeChange = (time) => {
-			emit('update:modelValue', parseMillisecondsFromObject(time));
+			emit('update:model-value', parseMillisecondsFromObject(time));
 		}
 
 		watch(() => props.modelValue, (val) => {
@@ -88,7 +88,6 @@ export default {
 
 		return {
 			value,
-			timepicker,
 			onTimeChange,
 		}
 	}
