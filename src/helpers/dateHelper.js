@@ -6,10 +6,11 @@ import 'moment/dist/locale/ru';
 import 'moment/dist/locale/kk';
 
 export function formatDate (date) {
-    return new Date(date).toLocaleDateString('en-US', {
+    return new Date(date).toLocaleString('en-US', {
         year: 'numeric',
         month: 'short',
-        day: 'numeric'
+        day: 'numeric',
+        timeStyle: short,
     });
 }
 
