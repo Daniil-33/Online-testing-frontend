@@ -38,7 +38,7 @@
 										color="primary"
 										:value="col.id"
 										:model-value="modelValue[row.id]"
-										:disabled="isViewingAnswer"
+										:readonly="isViewingAnswer"
 										@click="setRowValue(row.id, col.id)"
 									></v-checkbox>
 								</div>
@@ -102,7 +102,7 @@ export default {
 		}
 
 		onBeforeMount(() => {
-			updateModelValue(makeModelValueEmptyStructure())
+			!props.isViewingAnswer && updateModelValue(makeModelValueEmptyStructure())
 		})
 
 		return {

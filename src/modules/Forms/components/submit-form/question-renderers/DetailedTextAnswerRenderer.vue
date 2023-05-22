@@ -5,7 +5,7 @@
 			variant="underlined"
 			color="primary"
 			:model-value="modelValue"
-			:disabled="isViewingAnswer"
+			:re="isViewingAnswer"
 			@update:model-value="setValue"
 		/>
 	</div>
@@ -47,7 +47,7 @@ export default {
 		}
 
 		onBeforeMount(() => {
-			updateModelValue(makeModelValueEmptyStructure())
+			!props.isViewingAnswer && updateModelValue(makeModelValueEmptyStructure())
 		})
 
 		return {

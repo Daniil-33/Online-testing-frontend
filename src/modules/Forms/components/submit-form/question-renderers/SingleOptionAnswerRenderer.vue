@@ -12,7 +12,7 @@
 					<v-radio
 						inline
 						color="primary"
-						:disabled="isViewingAnswer"
+						:readonly="isViewingAnswer"
 						:value="option.id"
 						:label="option.text"
 					></v-radio>
@@ -29,7 +29,7 @@
 			<template v-else>
 				<v-radio
 					color="primary"
-					:disabled="isViewingAnswer"
+					:readonly="isViewingAnswer"
 					:value="option.id"
 					:label="option.text"
 				></v-radio>
@@ -91,7 +91,7 @@ export default {
 		}
 
 		onBeforeMount(() => {
-			updateModelValue(makeModelValueEmptyStructure())
+			!props.isViewingAnswer && updateModelValue(makeModelValueEmptyStructure())
 		})
 
 		return {

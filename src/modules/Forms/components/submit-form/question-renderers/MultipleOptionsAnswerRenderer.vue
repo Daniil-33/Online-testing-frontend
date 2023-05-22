@@ -9,7 +9,7 @@
 					<v-checkbox-btn
 						class="pr-2"
 						color="primary"
-						:disabled="isViewingAnswer"
+						:readonly="isViewingAnswer"
 						:label="option.text"
 						:value="option.id"
 						:model-value="modelValue.selected"
@@ -29,7 +29,7 @@
 				<v-checkbox-btn
 					class="pr-2"
 					color="primary"
-					:disabled="isViewingAnswer"
+					:readonly="isViewingAnswer"
 					:label="option.text"
 					:value="option.id"
 					:model-value="modelValue.selected"
@@ -99,7 +99,7 @@ export default {
 		}
 
 		onBeforeMount(() => {
-			updateModelValue(makeModelValueEmptyStructure())
+			!props.isViewingAnswer && updateModelValue(makeModelValueEmptyStructure())
 		})
 
 		return {

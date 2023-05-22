@@ -4,7 +4,7 @@
 			label="Short answer"
 			variant="underlined"
 			color="primary"
-			:disabled="isViewingAnswer"
+			:readonly="isViewingAnswer"
 			:model-value="modelValue"
 			@update:model-value="setValue"
 		></v-text-field>
@@ -56,7 +56,7 @@ export default {
 		}
 
 		onBeforeMount(() => {
-			updateModelValue(makeModelValueEmptyStructure())
+			!props.isViewingAnswer && updateModelValue(makeModelValueEmptyStructure())
 		})
 
 		return {

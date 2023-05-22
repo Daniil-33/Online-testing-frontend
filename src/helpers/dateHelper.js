@@ -10,7 +10,6 @@ export function formatDate (date) {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
-        timeStyle: short,
     });
 }
 

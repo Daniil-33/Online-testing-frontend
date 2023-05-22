@@ -35,8 +35,8 @@ export default function useSubmissions () {
 			ApiService.request('getSubmission', {
 				params: { id: submissionId }
 			})
-				.then(({ success, submission }) => {
-					submission.value = submission
+				.then(({ success, submission: submissionData }) => {
+					submission.value = submissionData
 					res(submission)
 				})
 				.catch((error) => {
