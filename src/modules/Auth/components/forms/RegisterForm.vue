@@ -3,28 +3,28 @@
 		<v-row justify="center">
 			<v-col xs="12" sm="12" md="12">
 				<v-card>
-					<v-card-title class="headline">Register</v-card-title>
+					<v-card-title class="headline">Реєстрація</v-card-title>
 					<v-form ref="form">
 						<v-card-text>
 							<v-text-field
 								:error="!formManager.name.$valid && formManager.name.$touched"
 								:error-messages="[
-									...(formManager.name.$errors.required && formManager.name.$touched ? ['This field is required'] : []),
-									...(formManager.name.$errors.minLength && formManager.name.$touched ? ['Name must include at least 3 characters'] : []),
+									...(formManager.name.$errors.required && formManager.name.$touched ? ['Це поле обов`язкове'] : []),
+									...(formManager.name.$errors.minLength && formManager.name.$touched ? ['Ім`я має містити не менше 3 символів'] : []),
 								]"
 								v-model="formManager.name.model"
-								label="Name"
+								label="Ім`я"
 								@blur="formManager.name.onFieldBlur"
 							/>
 
 							<v-text-field
 								:error="!formManager.email.$valid && formManager.email.$touched"
 								:error-messages="[
-									...(formManager.email.$errors.required && formManager.email.$touched ? ['This field is required'] : []),
-									...(formManager.email.$errors.email && formManager.email.$touched ? ['Email is not valid'] : []),
+									...(formManager.email.$errors.required && formManager.email.$touched ? ['Це поле обов`язкове'] : []),
+									...(formManager.email.$errors.email && formManager.email.$touched ? ['Введіть коректну електронну пошту'] : []),
 								]"
 								v-model="formManager.email.model"
-								label="Email"
+								label="Електронна пошта"
 								type="email"
 								@blur="formManager.email.onFieldBlur"
 							/>
@@ -32,11 +32,11 @@
 							<v-text-field
 								:error="!formManager.password.$valid && formManager.password.$touched"
 								:error-messages="[
-									...(formManager.password.$errors.required && formManager.password.$touched ? ['This field is required'] : []),
-									...(formManager.password.$errors.minLength && formManager.password.$touched ? ['Password must include at least 8 characters'] : []),
+									...(formManager.password.$errors.required && formManager.password.$touched ? ['Це поле обов`язкове'] : []),
+									...(formManager.password.$errors.minLength && formManager.password.$touched ? ['Пароль має містити не менше 8 символів'] : []),
 								]"
 								v-model="formManager.password.model"
-								label="Password"
+								label="Пароль"
 								type="password"
 								@blur="formManager.password.onFieldBlur"
 							/>
@@ -44,18 +44,18 @@
 							<v-text-field
 								:error="!formManager.passwordConfirm.$valid && formManager.passwordConfirm.$touched"
 								:error-messages="[
-									...(formManager.passwordConfirm.$errors.required && formManager.passwordConfirm.$touched ? ['Password must me confirmed'] : []),
-									...(formManager.passwordConfirm.$errors.passwordEqual && formManager.passwordConfirm.$touched ? ['Passwords are not equal'] : []),
+									...(formManager.passwordConfirm.$errors.required && formManager.passwordConfirm.$touched ? ['Пароль повинен бути підтверджений'] : []),
+									...(formManager.passwordConfirm.$errors.passwordEqual && formManager.passwordConfirm.$touched ? ['Паролі не однакові'] : []),
 								]"
 								v-model="formManager.passwordConfirm.model"
-								label="Confirm Password"
+								label="Підтвердіть пароль"
 								type="password"
 								@blur="formManager.passwordConfirm.onFieldBlur"
 							/>
 						</v-card-text>
 						<v-card-actions>
 							<v-spacer />
-							<v-btn color="primary" @click="onSubmit">Register</v-btn>
+							<v-btn color="primary" @click="onSubmit">Зареєструватися</v-btn>
 						</v-card-actions>
 					</v-form>
 				</v-card>

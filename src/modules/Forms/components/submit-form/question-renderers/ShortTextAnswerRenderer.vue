@@ -1,13 +1,43 @@
 <template>
-	<div>
-		<v-text-field
-			label="Short answer"
-			variant="underlined"
-			color="primary"
-			:readonly="isViewingAnswer"
-			:model-value="modelValue"
-			@update:model-value="setValue"
-		></v-text-field>
+	<div class="w-100">
+		<div class="d-flex align-center justify-space-between">
+			<slot name="heading"></slot>
+
+			<div class="d-flex align-center">
+				<template v-if="settingPoints">
+					<ui-number-field
+						style="max-width: 40px;"
+						:model-value="pointsData"
+						@update:model-value="updateAnswerPoints"
+					/>
+
+					<p class="pl-2">/ {{ maxPointsData }}</p>
+				</template>
+
+				<template v-else-if="showPointsAndAnswers">
+					<p class="pl-2">
+						<span :class="{ 'text-orange': pointsData > maxPointsData }">{{ pointsData }}</span>
+						 / {{ maxPointsData }}
+					</p>
+				</template>
+			</div>
+		</div>
+
+		<div
+			class="w-100 rounded"
+			:class="(settingPoints || showPointsAndAnswers) ? `px-1 py-1 bg-${pointsData === 0 ? 'red-lighten-4' : 'green-lighten-4'}` : ''"
+		>
+			<v-text-field
+				class="rounded"
+				label="Short answer"
+				variant="underlined"
+				hide-details
+				:color="(settingPoints || showPointsAndAnswers) ? (pointsData === 0 ? 'red' : 'green') : 'primary'"
+				:readonly="isViewingAnswer"
+				:model-value="modelValue"
+				@update:model-value="setValue"
+			></v-text-field>
+		</div>
 	</div>
 </template>
 <script>
@@ -24,13 +54,30 @@ export default {
 			type: Boolean,
 			default: () => false
 		},
-		isRightAnswered: {
+		showPointsAndAnswers: {
 			type: Boolean,
 			default: () => false
 		},
+		isCorrectAnswer: {
+			type: Boolean,
+			default: () => false
+		},
+		settingPoints: {
+			type: Boolean,
+			default: false
+		},
+		pointsData: {
+			type: Number,
+			default: 0
+		},
+		maxPointsData: {
+			type: Number,
+			default: 0
+		},
 	},
 	emits: {
-		'update:modelValue': null,
+		'update:model-value': null,
+		'update:answer-points': null,
 	},
 	expose: [ 'isAnswered' ],
 	setup(props, { emit }) {
@@ -52,7 +99,11 @@ export default {
 		}
 
 		const updateModelValue = (value) => {
-			emit('update:modelValue', value)
+			emit('update:model-value', value)
+		}
+
+		const updateAnswerPoints = (value) => {
+			emit('update:answer-points', value)
 		}
 
 		onBeforeMount(() => {
@@ -62,6 +113,7 @@ export default {
 		return {
 			setValue,
 			isAnswered,
+			updateAnswerPoints,
 		}
 	}
 }

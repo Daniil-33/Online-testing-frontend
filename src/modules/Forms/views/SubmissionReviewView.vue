@@ -1,9 +1,7 @@
 <template>
-	<div>
-		<SubmissionReview
-			:submissionId="submissionId"
-		/>
-	</div>
+	<SubmissionReview
+		:submissionId="submissionId"
+	/>
 </template>
 <script>
 import SubmissionReview from '../components/SubmissionReview.vue';

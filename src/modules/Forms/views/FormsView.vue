@@ -1,9 +1,10 @@
 <template>
 	<router-view v-slot="{ Component, route }">
 		<Transition name="scale" mode="out-in">
-			<div :key="route.name">
-				<component :is="Component"></component>
-			</div>
+			<component
+				:key="route.name"
+				:is="Component"
+			></component>
 		</Transition>
 	</router-view>
 </template>

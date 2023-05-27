@@ -1,6 +1,6 @@
 <template>
 	<v-text-field
-		label="Short answer"
+		label="Коротка відповідь"
 		variant="underlined"
 		color="primary"
 		:disabled="true"
@@ -10,7 +10,7 @@
 		v-if="showAnswers"
 		class="mt-2"
 	>
-		<p class="text-body"><span class="right-answers-text">Answers</span>: {{ answers }}</p>
+		<p class="text-body"><span class="right-answers-text">Відповіді</span>: {{ answers }}</p>
 	</div>
 </template>
 <script>

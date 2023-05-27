@@ -60,6 +60,13 @@
 	overflow: hidden;
 }
 
+.list-custom {
+	& .v-list-item:hover {
+		background-color: rgba(0, 0, 0, 0.1);
+		cursor: pointer;
+	}
+}
+
 @mixin question-grid {
 	table {
 		border-collapse: separate;
@@ -99,6 +106,10 @@
 			white-space: nowrap;
 			text-overflow: ellipsis;
 			overflow: hidden;
+		}
+
+		& .v-input__control {
+			justify-content: center;
 		}
 	}
 	.tr-placeholder {

@@ -1,14 +1,15 @@
 import Auth from './components/Auth.vue'
+import { storeToRefs } from 'pinia'
 import { useAuthStore } from './store/authStore'
-
-import { computed } from 'vue'
 
 const useAuthModule = () => {
 	const authStore = useAuthStore()
-	const isAuth = computed(() => authStore.isAuth)
+	const { currentUser, isAuth, isLoadingCurrentUser } = storeToRefs(authStore)
 
 	return {
-		isAuth
+		isAuth,
+		currentUser,
+		isLoadingCurrentUser
 	}
 }
 

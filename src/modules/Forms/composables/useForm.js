@@ -1,16 +1,25 @@
 import ApiService from '../api/';
 import { ref, reactive, computed, watch } from 'vue';
+import { useApplicationStore } from '@/stores/applicationStore';
+import { parseError } from '@/helpers/request-error-parser';
 
 export default function useForm() {
+	const { addErrorNotify } = useApplicationStore()
+
 	const formsList = ref([])
+	const formSubmissionsList = ref([])
 	const form = ref(null)
 	const formSubmissionConfig = ref(null)
+	const formSubmissionsAnalytic = ref(null)
 	const loadingFlags = reactive({
 		getForm: false,
 		addForm: false,
 		updateForm: false,
 		deleteForm: false,
-		postForm: false
+		postForm: false,
+		getSubmissions: false,
+		deleteSubmission: false,
+		getFormSubmissionsAnalytic: false
 	})
 
 	const getForm = async (id) => {
@@ -26,6 +35,10 @@ export default function useForm() {
 				})
 				.catch((error) => {
 					rej(error)
+
+					addErrorNotify({
+						text: parseError(error.response.data || {}),
+					})
 				})
 				.finally(() => loadingFlags.getForm = false)
 		})
@@ -42,6 +55,9 @@ export default function useForm() {
 				})
 				.catch((error) => {
 					rej(error)
+					addErrorNotify({
+						text: parseError(error.response.data || {}),
+					})
 				})
 				.finally(() => {
 					loadingFlags.getForm = false
@@ -63,8 +79,78 @@ export default function useForm() {
 				})
 				.catch((error) => {
 					rej(error)
+					addErrorNotify({
+						text: parseError(error.response.data || {}),
+					})
 				})
 				.finally(() => loadingFlags.getForm = false)
+		})
+	}
+
+	const getFormSubmissionsAnalytic = async (id) => {
+		return new Promise((res, rej) => {
+			loadingFlags.getFormSubmissionsAnalytic = true
+
+			ApiService.request('getFormSubmissionsAnalytic', {
+				params:{ id }
+			})
+				.then(({ success, analytic }) => {
+					formSubmissionsAnalytic.value = analytic
+					res(analytic)
+				})
+				.catch((error) => {
+					rej(error)
+					addErrorNotify({
+						text: parseError(error.response.data || {}),
+					})
+				})
+				.finally(() => loadingFlags.getFormSubmissionsAnalytic = false)
+		})
+	}
+
+	const getFormSubmissions = async (id) => {
+		return new Promise((res, rej) => {
+			loadingFlags.getSubmissions = true
+
+			ApiService.request('getFormSubmissions', {
+				params:{ id }
+			})
+				.then(({ success, submissions }) => {
+					formSubmissionsList.value = submissions
+					res(submissions)
+				})
+				.catch((error) => {
+					rej(error)
+					addErrorNotify({
+						text: parseError(error.response.data || {}),
+					})
+				})
+				.finally(() => loadingFlags.getSubmissions = false)
+		})
+	}
+
+	const deleteFormSubmission = async (formId, submissionId) => {
+		return new Promise((res, rej) => {
+			loadingFlags.deleteSubmission = true
+
+			ApiService.request('deleteFormSubmission', {
+				params: {
+					id: formId,
+					submissionId
+				}
+			})
+				.then(({ success, formId }) => {
+					form.value = formId
+
+					res(formId)
+				})
+				.catch((error) => {
+					rej(error)
+					addErrorNotify({
+						text: parseError(error.response.data || {}),
+					})
+				})
+				.finally(() => loadingFlags.deleteSubmission = false)
 		})
 	}
 
@@ -78,7 +164,12 @@ export default function useForm() {
 
 					res(formId)
 				})
-				.catch((error) => rej(error))
+				.catch((error) => {
+					rej(error)
+					addErrorNotify({
+						text: parseError(error.response.data || {}),
+					})
+				})
 				.finally(() => loadingFlags.addForm = false)
 		})
 	}
@@ -96,12 +187,35 @@ export default function useForm() {
 
 					res(formId)
 				})
-				.catch((error) => rej(error))
+				.catch((error) => {
+					rej(error)
+					addErrorNotify({
+						text: parseError(error.response.data || {}),
+					})
+				})
 				.finally(() => loadingFlags.updateForm = false)
 		})
 	}
 
-	const deleteForm = async (id) => {}
+	const deleteForm = async (id) => {
+		return new Promise((res, rej) => {
+			loadingFlags.deleteForm = true
+
+			ApiService.request('deleteForm', {
+				params: { id }
+			})
+				.then(({ success }) => {
+					res(success)
+				})
+				.catch((error) => {
+					rej(error)
+					addErrorNotify({
+						text: parseError(error.response.data || {}),
+					})
+				})
+				.finally(() => loadingFlags.deleteForm = false)
+		})
+	}
 
 	const postForm = (id, answers) => {
 		return new Promise((res, rej) => {
@@ -112,7 +226,12 @@ export default function useForm() {
 				data: { answers }
 			})
 				.then(({ success, confirmText }) => res(confirmText))
-				.catch((error) => rej(error))
+				.catch((error) => {
+					rej(error)
+					addErrorNotify({
+						text: parseError(error.response.data || {}),
+					})
+				})
 				.finally(() => loadingFlags.postForm = false)
 		})
 	}
@@ -121,11 +240,16 @@ export default function useForm() {
 		formsList,
 		form,
 		formSubmissionConfig,
+		formSubmissionsAnalytic,
+		formSubmissionsList,
 		loadingFlags,
 
 		getForm,
 		getFormsList,
 		getFormForSubmission,
+		getFormSubmissions,
+		deleteFormSubmission,
+		getFormSubmissionsAnalytic,
 		addForm,
 		updateForm,
 		deleteForm,

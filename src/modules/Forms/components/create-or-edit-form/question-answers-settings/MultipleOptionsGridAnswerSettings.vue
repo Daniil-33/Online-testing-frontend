@@ -2,7 +2,7 @@
 	<v-row>
 		<v-col cols="10">
 			<p class="text-h5" :class="{ 'text-disabled': !title }">
-				{{ title || 'Question title' }}
+				{{ title || 'Назва питання' }}
 			</p>
 		</v-col>
 		<v-col cols="2">
@@ -24,7 +24,7 @@
 										<p>{{ col.text }}</p>
 									</div>
 								</th>
-								<th class="pinned-right" style="width: 120px"></th>
+								<th class="pinned-right" style="width: 120px">Оцінка</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -45,10 +45,11 @@
 									>
 										<div class="td-inner py-1 px-1 td-content">
 											<v-checkbox
-												class="answer-checkbox"
+												class="answer-checkbox rounded"
 												v-model="rightOptions[row.id].id"
 												label=""
-												color="primary"
+												color="success"
+												:class="rightOptions[row.id].id.includes(col.id) ? 'bg-green-lighten-4' : ''"
 												:value="col.id"
 												@update:model-value="updateOptions()"
 											></v-checkbox>

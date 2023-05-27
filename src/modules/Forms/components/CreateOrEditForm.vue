@@ -1,10 +1,34 @@
 <template>
-	<div>
-		<v-card class="px-5 py-5">
+	<div class="h-100">
+		<v-card class="px-5 py-5 mb-5">
 			<div class="w-100 d-flex align-center justify-space-between mb-3">
-				<h2>{{isEditing ? 'Editing form' : 'Create new form'}}</h2>
+				<h2>{{isEditing ? 'Редагування форми' : 'Створення нової форми'}}</h2>
 
 				<div class="d-flex">
+					<v-btn
+						v-if="isEditing"
+						class="ml-2"
+						size="small"
+						:loading="isSaving"
+						:disabled="isSaving"
+						@click="onSaveHandler"
+					>
+						<v-icon icon="mdi-open-in-new" left/>
+
+						Переглянути
+					</v-btn>
+					<v-btn
+						v-if="isEditing"
+						class="ml-2"
+						size="small"
+						:loading="isSaving"
+						:disabled="isSaving"
+						@click="onSaveHandler"
+					>
+						<v-icon icon="mdi-refresh" left/>
+
+						Оновити
+					</v-btn>
 					<v-btn
 						v-if="isEditing"
 						color="primary"
@@ -16,7 +40,7 @@
 					>
 						<v-icon icon="mdi-content-save" left/>
 
-						Save
+						Сберегти
 					</v-btn>
 				</div>
 			</div>
@@ -34,24 +58,31 @@
 
 		<template v-if="!isFormObjectReady">
 			<v-card class="px-5 py-5 mt-3">
-				<div class="d-flex w-100 justify-center">
-					<v-progress-circular
-						indeterminate
-						color="primary"
-					></v-progress-circular>
+				<div class="loader-fill-height">
+					<div class="d-flex align-center h-100 w-100 justify-center">
+						<v-progress-circular
+							indeterminate
+							color="primary"
+						></v-progress-circular>
+					</div>
 				</div>
 			</v-card>
+		</template>
+		<template v-else-if="isLoadingCrashed">
+			<div class="w-100 px-3 py-3 d-flex justify-center">
+				<p class="text-h4 text-center">Щось пішло не так...</p>
+			</div>
 		</template>
 		<template v-else>
 			<v-window
 				v-model="tab"
-				class="px-5 py-5 create-test-container"
-				style="height: calc(100vh - 136px); overflow-y: auto;"
+				class="px-5 create-test-container"
+				style="height: calc(100vh - 162px); overflow-y: auto;"
 			>
 				<v-window-item value="questions">
 					<FormQuestionsAggregator
 						:questions="questions"
-						:isTestModeActive="isTestModeActive"
+						:isTimeLimitActive="isTimeLimitActive"
 						@add:question="addQuestion"
 						@remove:question="removeQuestion"
 						@duplicate:question="duplicateQuestion"
@@ -63,7 +94,7 @@
 									<v-row>
 										<v-col cols="12">
 											<div class="">
-												<h5 class="text-h5">From Title</h5>
+												<h5 class="text-h5">Назва форми</h5>
 												<v-text-field
 													label=""
 													variant="underlined"
@@ -72,7 +103,7 @@
 												></v-text-field>
 											</div>
 											<div class="">
-												<h6 class="text-h6">From Description</h6>
+												<h6 class="text-h6">Опис форми</h6>
 												<v-text-field
 													label=""
 													variant="underlined"
@@ -89,7 +120,9 @@
 				</v-window-item>
 
 				<v-window-item value="submissions">
-					<FormSubmissions />
+					<FormSubmissions
+						:form="form"
+					/>
 				</v-window-item>
 
 				<v-window-item value="settings">
@@ -112,6 +145,7 @@ import useForm from '../composables/useForm'
 
 import { ref, computed, watch, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { safeAsyncCall } from '@/helpers/utilsHelper'
 
 export default {
 	name: 'CreateOrEditForm',
@@ -130,20 +164,23 @@ export default {
 		const router = useRouter();
 		const tabs = [
 			{
-				title: 'Questions',
+				title: 'Питання',
 				value: 'questions',
 			},
 			{
-				title: 'Submissions',
+				title: 'Результати',
 				value: 'submissions',
 			},
 			{
-				title: 'Settings',
+				title: 'Налаштування',
 				value: 'settings',
 			},
 		];
 		const tab = ref(tabs[0].value);
 
+		const isTimeLimitActive = computed(() => {
+			return settings.value.questionDefaultTimeLimit > 0;
+		});
 		const isEditing = computed(() => {
 			return props.formId !== null;
 		});
@@ -174,25 +211,32 @@ export default {
 			getForm,
 		} = useForm()
 
+		const isLoadingCrashed = ref(false)
+		const loadData = async () => {
+			const [error, result] = await safeAsyncCall(getForm(props.formId))
+
+			if (error) {
+				isLoadingCrashed.value = true
+				return
+			}
+
+			syncWithConfig(form.value)
+			isFormObjectReady.value = true;
+		}
+
 		if (isEditing) {
-			getForm(props.formId)
-				.then(() => {
-					syncWithConfig(form.value)
-					isFormObjectReady.value = true;
-				})
+			loadData()
 		}
 
 		const isLoading = computed(() => loadingFlags.getForm);
 		const isSaving = computed(() => loadingFlags.updateForm);
 		const isFormObjectReady = ref(false);
 
-		const isTestModeActive = computed(() => settings.value.isTest);
-
 		const onSaveHandler = () => {
-			updateForm({
+			safeAsyncCall(updateForm({
 				id: props.formId,
 				data: toConfig()
-			})
+			}))
 		}
 
 		onMounted(async () => {
@@ -208,19 +252,13 @@ export default {
 			}
 		})
 
-		// TODO
-		// watch(() => formSettings.model.value.questionDefaultTimeLimit, (value) => {
-		// 	questions.value.forEach((question) => {
-		// 		!question.model.timeLimit && question.setTimeLimit(value);
-		// 	});
-		// })
-
 		return {
 			tabs,
 			tab,
 
 			title,
 			description,
+			isTimeLimitActive,
 
 
 			questions,
@@ -232,8 +270,8 @@ export default {
 			settings,
 			updateSettings,
 
+			form,
 			isEditing,
-			isTestModeActive,
 			isSaving,
 			isLoading,
 			isFormObjectReady,
@@ -246,5 +284,9 @@ export default {
 <style>
 .create-test-container .v-window__container{
 	height: unset;
+}
+
+.loader-fill-height {
+	height: calc(100vh - 203px) !important;
 }
 </style>

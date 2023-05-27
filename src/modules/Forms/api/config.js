@@ -24,6 +24,18 @@ export default {
 		url: '/api/form/:id',
 		method: 'DELETE'
 	},
+	'getFormSubmissions': {
+		url: '/api/form/:id/submissions',
+		method: 'GET'
+	},
+	'deleteFormSubmission': {
+		url: '/api/form/:id/submissions/:submissionId',
+		method: 'DELETE'
+	},
+	'getFormSubmissionsAnalytic': {
+		url: '/api/form/:id/submissions/analytic',
+		method: 'GET'
+	},
 
 	// Submissions
 	'getSubmission': {
@@ -36,6 +48,7 @@ export default {
 	},
 	'updateSubmissionPoints': {
 		url: '/api/submission/:id/update-points',
+		method: 'PUT'
 	},
 	'deleteSubmission': {
 		url: '/api/submission/:id',

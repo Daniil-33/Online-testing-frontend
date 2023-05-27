@@ -5,6 +5,7 @@ export const useAuthStore = defineStore('auth', {
 		currentUser: null,
 		accessToken: null,
 		refreshToken: null,
+		loadingCurrentUser: true
 	}),
 	actions: {
 		setAuthAccessToken(token) {
@@ -15,10 +16,14 @@ export const useAuthStore = defineStore('auth', {
 		},
 		setCurrentUser(user) {
 			this.currentUser = user;
-		}
+		},
+		setLoadingCurrentUser(loading) {
+			this.loadingCurrentUser = loading;
+		},
 	},
 	getters: {
 		isAuth: (state) => !!state.currentUser,
+		isLoadingCurrentUser: (state) => state.loadingCurrentUser,
 		getCurrentUser: (state) => state.currentUser,
 	}
 });

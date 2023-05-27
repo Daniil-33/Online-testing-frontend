@@ -17,7 +17,7 @@
 				<v-row>
 					<v-col cols="6">
 						<v-text-field
-							label="Question Title"
+							label="Назва питання"
 							variant="underlined"
 							color="primary"
 							:model-value="title"
@@ -28,7 +28,7 @@
 						cols="6"
 					>
 						<v-select
-							label="Question Type"
+							label="Тип питання"
 							variant="underlined"
 							color="primary"
 							:model-value="type"
@@ -58,23 +58,28 @@
 
 				<div
 					class="w-100 d-flex align-center"
-					:class="(isTestModeActive && !settingRightAnswersMode) ? 'justify-space-between' : 'justify-end'"
+					:class="!settingRightAnswersMode ? 'justify-space-between' : 'justify-end'"
 				>
 					<template v-if="!settingRightAnswersMode">
 						<div class="d-flex align-center">
 							<v-btn
-								v-if="isTestModeActive"
 								color="primary"
 								variant="tonal"
 								prepend-icon="mdi-clipboard-check "
 								@click="settingRightAnswersMode = true"
 							>
-								Answers
+								Відповіді
 							</v-btn>
 
-							<div class="ml-1 d-flex align-center">({{ questionPoints }} points)</div>
+							<div class="ml-1 d-flex align-center">({{ questionPoints }} баллів)</div>
 						</div>
 						<div class="d-flex align-items-center">
+							<ui-time-picker
+								v-if="isTimeLimitActive"
+								:model-value="timeLimit"
+								@update:model-value="setQuestionTimeLimit"
+							/>
+
 							<v-btn
 								text
 								size="small"
@@ -110,18 +115,10 @@
 										<v-checkbox
 											class="no-input-details checkbox-sm"
 											color="primary"
-											label="Required question"
+											label="Обов'язкове питання"
 											:model-value="isRequired"
 											@update:model-value="setQuestionIsRequired"
 										></v-checkbox>
-
-										<v-divider class="mt-2"></v-divider>
-
-										<div class="mt-2">
-											<p class="text-body mb-1">Strict question time</p>
-
-											<VTimePicker />
-										</div>
 									</v-card-text>
 								</v-card>
 							</v-menu>
@@ -133,7 +130,7 @@
 							variant="tonal"
 							@click="settingRightAnswersMode = false"
 						>
-							Done
+							Готово
 						</v-btn>
 					</template>
 				</div>
@@ -167,41 +164,41 @@ import {
 } from './question-answers-settings/'
 
 import { computed , ref, watch } from 'vue';
-import { questionTypesReference } from '../../models/FormQuestion'
+import { questionTypesReference } from '../../composables/useFormManager'
 
 const questionTypesComponentsReference = [
 	{
-		text: 'Short Answer',
+		text: 'Коротка відповідь',
 		value: questionTypesReference.SHORT_TEXT_ANSWER,
 		componentName: 'ShortTextQuestion',
 		settingRightAnswersComponentName: 'ShortTextAnswerSettings',
 	},
 	{
-		text: 'Detailed Answer',
+		text: 'Розгорнута відповідь',
 		value: questionTypesReference.DETAILED_TEXT_ANSWER,
 		componentName: 'DetailedTextQuestion',
 		settingRightAnswersComponentName: 'DetailedTextAnswerSettings',
 	},
 	{
-		text: 'Multiple Choice',
+		text: 'Множинний вибір',
 		value: questionTypesReference.MULTIPLE_OPTIONS,
 		componentName: 'MultipleOptionsQuestion',
 		settingRightAnswersComponentName: 'MultipleOptionsAnswerSettings',
 	},
 	{
-		text: 'Single Choice',
+		text: 'Вибір одного варіанту',
 		value: questionTypesReference.SINGLE_OPTION,
 		componentName: 'SingleOptionQuestion',
 		settingRightAnswersComponentName: 'SingleOptionAnswerSettings',
 	},
 	{
-		text: 'Grid of single choices',
+		text: 'Сітка з одним варіантом',
 		value: questionTypesReference.SINGLE_OPTIONS_GRID,
 		componentName: 'SingleOptionsGridQuestion',
 		settingRightAnswersComponentName: 'SingleOptionsGridAnswerSettings',
 	},
 	{
-		text: 'Grid of multiple choices',
+		text: 'Сітка множинного вибору',
 		value: questionTypesReference.MULTIPLE_OPTIONS_GRID,
 		componentName: 'MultipleOptionsGridQuestion',
 		settingRightAnswersComponentName: 'MultipleOptionsGridAnswerSettings',
@@ -219,10 +216,10 @@ export default {
 			type: Object,
 			default: () => ({})
 		},
-		isTestModeActive: {
+		isTimeLimitActive: {
 			type: Boolean,
-			default: () => false,
-		}
+			default: false,
+		},
 	},
 	emits: {
 		'duplicate:question': null,
@@ -259,7 +256,14 @@ export default {
 		const type = computed(() => props.question.type)
 		const isRequired = computed(() => props.question.required)
 		const content = computed(() => props.question.content)
-		const questionPoints = computed(() => props.question.answerSettings?.points || 0)
+		const timeLimit = computed(() => props.question.timeLimit)
+		const questionPoints = computed(() => {
+			if (props.question.answerSettings?.points === undefined) {
+				return Object.values(props.question.answerSettings || {}).reduce((acc, { points }) => acc + points, 0)
+			} else {
+				return props.question.answerSettings?.points
+			}
+		})
 		const questionAnswerSettings = computed(() => props.question.answerSettings)
 
 		const setQuestionTitle = (title) => {
@@ -272,6 +276,10 @@ export default {
 
 		const setQuestionIsRequired = (isRequired) => {
 			emit('update:question', { isRequired });
+		}
+
+		const setQuestionTimeLimit = (timeLimit) => {
+			emit('update:question', { timeLimit });
 		}
 
 		const setQuestionContent = (content) => {
@@ -305,12 +313,14 @@ export default {
 			content,
 			questionPoints,
 			questionAnswerSettings,
+			timeLimit,
 
 			setQuestionTitle,
 			setQuestionType,
 			setQuestionIsRequired,
 			setQuestionContent,
 			setQuestionAnswerSettings,
+			setQuestionTimeLimit,
 		};
 	}
 }

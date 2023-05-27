@@ -15,17 +15,18 @@
 
 		<template v-slot:actions>
 			<v-btn
-				color="blue"
+				color="white"
 				variant="text"
 				@click="notify.status = false"
 			>
-				Close
+				Закрити
 			</v-btn>
 		</template>
 	</v-snackbar>
 </template>
 <script>
 import { useApplicationStore } from '@/stores/applicationStore';
+
 export default {
 	name: 'NotificationProvider',
 	setup() {

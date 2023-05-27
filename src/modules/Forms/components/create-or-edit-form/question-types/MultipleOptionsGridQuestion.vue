@@ -1,7 +1,7 @@
 <template>
 	<v-row>
 		<v-col cols="6">
-			<p class="text-h6">Rows</p>
+			<p class="text-h6">Рядки</p>
 			<draggable
 				itemKey="id"
 				:list="rows"
@@ -20,7 +20,6 @@
 							v-model="option.text"
 							variant="underlined"
 							color="primary"
-							:autofocus="true"
 						></v-text-field>
 
 						<v-icon
@@ -37,11 +36,11 @@
 				variant="plain"
 				@click="addRow"
 			>
-				Add row
+				Додати рядок
 			</v-btn>
 		</v-col>
 		<v-col cols="6">
-			<p class="text-h6">Cols</p>
+			<p class="text-h6">Стовпці</p>
 			<draggable
 				itemKey="id"
 				:list="cols"
@@ -63,7 +62,6 @@
 							v-model="option.text"
 							variant="underlined"
 							color="primary"
-							:autofocus="true"
 							@change="updateOptions"
 						></v-text-field>
 
@@ -81,7 +79,7 @@
 				variant="plain"
 				@click="addCol"
 			>
-				Add column
+				Додати стовпець
 			</v-btn>
 		</v-col>
 	</v-row>

@@ -1,10 +1,18 @@
 <template>
 	<div class="h-100 w-100 d-flex align-center justify-center">
-		<div class="auth bg-white rounded overflow-hidden">
+		<template v-if="isLoadingCurrentUser">
+			<v-card class="w-100 h-100 d-flex align-center justify-center">
+				<v-progress-circular
+					indeterminate
+					color="primary"
+				></v-progress-circular>
+			</v-card>
+		</template>
+		<div v-else class="auth bg-white rounded overflow-hidden">
 			<v-tabs
 				fixed-tabs
 				rounded
-				bg-color="indigo-darken-2"
+				bg-color="primary"
 				v-model="tab"
 			>
 				<v-tab
@@ -35,6 +43,8 @@ import RegisterForm from './forms/RegisterForm.vue';
 import { ref, onBeforeMount } from 'vue'
 
 import useAuth from '../composables/useAuth';
+import { useAuthStore } from '../store/authStore';
+import { storeToRefs } from 'pinia'
 
 export default {
 	name: 'Auth',
@@ -45,16 +55,17 @@ export default {
 	setup() {
 		const tabs = [
 			{
-				title: 'Login',
+				title: 'Авторизація',
 				value: 'login',
 			},
 			{
-				title: 'Register',
+				title: 'Реєстрація',
 				value: 'register',
 			}
 		];
 		const tab = ref(tabs[0].value);
 
+		const { isLoadingCurrentUser } = storeToRefs(useAuthStore());
 		const { tryAutoLogin } = useAuth();
 
 		onBeforeMount(() => {
@@ -64,6 +75,7 @@ export default {
 		return {
 			tabs,
 			tab,
+			isLoadingCurrentUser,
 		}
 	},
 }

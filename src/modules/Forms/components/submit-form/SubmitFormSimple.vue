@@ -56,7 +56,7 @@
 				color="primary"
 				@click="submit"
 			>
-				Отправить
+				Відправити
 			</v-btn>
 		</div>
 	</div>
@@ -73,7 +73,7 @@ import {
 	MultipleOptionsGridAnswerRenderer,
 } from './question-renderers/'
 
-import { questionTypesReference } from '../../models/FormQuestion'
+import { questionTypesReference } from '../../composables/useFormManager'
 
 const questionTypesComponentReference = {
 	[questionTypesReference.SHORT_TEXT_ANSWER]: ShortTextAnswerRenderer,

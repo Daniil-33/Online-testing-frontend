@@ -21,7 +21,6 @@
 					v-model="option.text"
 					variant="underlined"
 					color="primary"
-					:autofocus="true"
 					:value="option.isCustomAnswer ? 'Write your answer here...' : option.text"
 					:disabled="option.isCustomAnswer"
 					@change="updateOptions"
@@ -42,7 +41,7 @@
 			variant="plain"
 			@click="addOption(false)"
 		>
-			Add option
+			Додати опцію
 		</v-btn>
 
 		<template v-if="isCustomOptionAvailable">
@@ -50,7 +49,7 @@
 				&nbsp;or &nbsp;
 			</span>
 			<v-btn variant="tonal" @click="addOption(true)">
-				Add "another" option
+				Добавити опцію "Власний варіант"
 			</v-btn>
 		</template>
 	</div>

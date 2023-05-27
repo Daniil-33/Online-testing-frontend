@@ -20,6 +20,7 @@ app.use(createPinia())
 
 import UIProgressBar from '@/components/ui/UIProgressBar.vue'
 import UILoader from '@/components/ui/UILoader.vue'
+import UiButtonsGroupToggler from '@/components/ui/UiButtonsGroupToggler.vue'
 import UITimePicker from '@/components/ui/inputs/UiTimePicker.vue'
 import UINumberField from '@/components/ui/inputs/UINumberField.vue'
 
@@ -27,6 +28,7 @@ app.component('ui-time-picker', UITimePicker)
 app.component('ui-number-field', UINumberField)
 app.component('ui-progress-bar', UIProgressBar)
 app.component('ui-loader', UILoader)
+app.component('ui-buttons-group-toggler', UiButtonsGroupToggler)
 
 
 app.mount('#app')

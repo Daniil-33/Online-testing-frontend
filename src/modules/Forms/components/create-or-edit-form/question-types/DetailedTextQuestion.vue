@@ -1,7 +1,7 @@
 <template>
 	<v-text-field
 		v-model="modelValue"
-		label="Complex answer"
+		label="Розгорнута відповідь"
 		variant="underlined"
 		color="primary"
 		:disabled="true"

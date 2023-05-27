@@ -26,7 +26,7 @@ export const useApplicationStore = defineStore('application', () => {
 	const addErrorNotify = (payload = {}) => {
 		let notify = {
 			color: 'error',
-			timeout: 3000,
+			timeout: 5000,
 			...payload,
 		}
 

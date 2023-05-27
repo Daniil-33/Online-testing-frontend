@@ -1,48 +1,58 @@
 import ApiService from '../api/';
 import getRequestServiceInstance from '@/services/requestService.js';
 import { clientStorageLocal } from '@/helpers/clientStorageHelper';
-import { LOCAL_STORAGE_AUTH_ACCESS_TOKEN_KEY, LOCAL_STORAGE_AUTH_REFRESH_TOKEN_KEY } from '@/config/clientStorageKeys';
+import { LOCAL_STORAGE_AUTH_ACCESS_TOKEN_KEY } from '@/config/clientStorageKeys';
 
 import { useAuthStore } from '../store/authStore';
 import { useApplicationStore } from '@/stores/applicationStore';
 
 export default function useAuth() {
-	const { setAuthAccessToken, setAuthRefreshToken, setCurrentUser } = useAuthStore();
+	const { setAuthAccessToken, setCurrentUser, setLoadingCurrentUser } = useAuthStore();
 	const { addErrorNotify, addSuccessNotify } = useApplicationStore();
 
-	const tryAutoLogin = () => {
+	const tryAutoLogin = async () => {
 		const accessToken = clientStorageLocal.get(LOCAL_STORAGE_AUTH_ACCESS_TOKEN_KEY);
 
 		if (accessToken) {
+			setLoadingCurrentUser(true);
 			setAuthAccessToken(accessToken);
 
 			const globalRequestService = getRequestServiceInstance();
 			globalRequestService.setAccessToken(accessToken)
 
+			try {
+				await login({});
+			} catch (error) {}
 
-			return login({});
+			setLoadingCurrentUser(false);
 		}
 	}
 
 	const login = async ({ email, password }) => {
-		ApiService.request('login', {
-			queryParams: {
-				email,
-				password
-			}
-		})
-			.then(
-				({ token,  user }) => {
+		return new Promise((res, rej) => {
+			ApiService.request('login', {
+				queryParams: {
+					email,
+					password
+				}
+			})
+				.then(({ token, user }) => {
 					saveAuthTokens(token);
 					setCurrentUser(user);
 					addSuccessNotify({
-						text: 'Login successful.'
+						text: 'Авторизація успішна'
 					});
-				},
-				(error) => addErrorNotify({
-					text: error?.message || 'Login failed, please try again later.'
+
+					res(user);
 				})
-			)
+				.catch((error) => {
+					addErrorNotify({
+						text: error?.message || 'Авторизація не вдалася, спробуйте пізніше.'
+					})
+
+					rej(error);
+				})
+		})
 	};
 
 	const register = async ({ name, email, password }) => {
@@ -57,30 +67,21 @@ export default function useAuth() {
 				({ token, user }) => {
 					saveAuthTokens(token);
 					addSuccessNotify({
-						text: 'Register successful.'
+						text: 'Регістрація успішна'
 					});
 				},
 				(error) => addErrorNotify({
-					text: error?.message || 'Register failed, please try again later.'
+					text: error?.message || 'Регістрація не вдалася, спробуйте пізніше.'
 				})
 			)
 	};
 
 	const logout = () => {
 		clientStorageLocal.remove(LOCAL_STORAGE_AUTH_ACCESS_TOKEN_KEY);
-		// clientStorageLocal.remove(LOCAL_STORAGE_AUTH_REFRESH_TOKEN_KEY);
 
 		setAuthAccessToken(null);
-		// setAuthRefreshToken(null);
 	};
 
-	// const saveAuthTokens = ({ accessToken, refreshToken }) => {
-	// 	clientStorageLocal.add(LOCAL_STORAGE_AUTH_ACCESS_TOKEN_KEY, accessToken);
-	// 	clientStorageLocal.add(LOCAL_STORAGE_AUTH_REFRESH_TOKEN_KEY, refreshToken);
-
-	// 	setAuthAccessToken(accessToken);
-	// 	setAuthRefreshToken(refreshToken);
-	// };
 	const saveAuthTokens = (token) => {
 		clientStorageLocal.add(LOCAL_STORAGE_AUTH_ACCESS_TOKEN_KEY, token);
 

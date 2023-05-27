@@ -5,16 +5,19 @@ export default function useSubmissions () {
 	const submissionsList = ref([])
 	const submission = ref(null)
 	const loadingFlags = reactive({
+		getSubmissions: false,
 		getSubmission: false,
 		deleteSubmission: false,
 		updateSubmissionPoints: false
 	})
 
-	const getSubmissions = async () => {
+	const getSubmissions = async (formId) => {
 		return new Promise((res, rej) => {
-			loadingFlags.getSubmission = true
+			loadingFlags.getSubmissions = true
 
-			ApiService.request('getSubmissionsList', {})
+			ApiService.request('getSubmissionsList', {
+				...(formId ? {queryParams: { formId }} : {})
+			})
 				.then(({ success, submissions }) => {
 					submissionsList.value = submissions
 					res(submissions)
@@ -23,7 +26,7 @@ export default function useSubmissions () {
 					rej(error)
 				})
 				.finally(() => {
-					loadingFlags.getSubmission = false
+					loadingFlags.getSubmissions = false
 				})
 		})
 	}
@@ -48,12 +51,53 @@ export default function useSubmissions () {
 		})
 	}
 
+	const deleteSubmission = async (submissionId) => {
+		return new Promise((res, rej) => {
+			loadingFlags.deleteSubmission = true
+
+			ApiService.request('deleteSubmission', {
+				params: { id: submissionId }
+			})
+				.then(({ success }) => {
+					res(success)
+				})
+				.catch((error) => {
+					rej(error)
+				})
+				.finally(() => {
+					loadingFlags.deleteSubmission = false
+				})
+		})
+	}
+
+	const updateSubmissionPoints = async (submissionId, pointsData) => {
+		return new Promise((res, rej) => {
+			loadingFlags.updateSubmissionPoints = true
+
+			ApiService.request('updateSubmissionPoints', {
+				params: { id: submissionId },
+				data: { pointsData }
+			})
+				.then(({ success }) => {
+					res(success)
+				})
+				.catch((error) => {
+					rej(error)
+				})
+				.finally(() => {
+					loadingFlags.updateSubmissionPoints = false
+				})
+		})
+	}
+
 	return {
 		submission,
 		submissionsList,
 		loadingFlags,
 
 		getSubmissions,
-		getSubmission
+		getSubmission,
+		updateSubmissionPoints,
+		deleteSubmission,
 	}
 }

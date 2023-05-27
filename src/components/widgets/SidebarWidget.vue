@@ -6,11 +6,15 @@
 		@click="rail = false"
 	>
         <v-list-item
-			title="John Leider"
+			:title="userName"
 			nav
         >
 			<template v-slot:prepend>
-				<v-icon icon="mdi-account"></v-icon>
+				<v-icon
+					class="user-icon"
+					icon="mdi-account"
+					:class="{ 'user-icon--spacing': rail }"
+				></v-icon>
 			</template>
 
 			<template v-slot:append>
@@ -28,7 +32,7 @@
           	<v-list-item
 				:to="{ name: 'Forms List' }"
 				exact
-				title="My Forms"
+				title="Мої форми"
 			>
 				<template v-slot:prepend>
 					<v-icon icon="mdi-format-list-bulleted"></v-icon>
@@ -38,7 +42,7 @@
           	<v-list-item
 				:to="{ name: 'Submissions List' }"
 				exact
-				title="My Submissions"
+				title="Мої результати"
 			>
 				<template v-slot:prepend>
 					<v-icon icon="mdi-file-check-outline"></v-icon>
@@ -51,6 +55,9 @@
 <script>
 import SvgIcon from '@jamescoyle/vue-icon'
 import { mdiListBoxOutline } from '@mdi/js';
+
+import { useAuthModule } from '@/modules/Auth/';
+import { computed } from 'vue';
 
 export default {
 	name: 'SidebarWidget',
@@ -66,21 +73,22 @@ export default {
 	data () {
       return {
         drawer: true,
-        items: [
-          { title: 'Home', icon: 'mdi-home-city' },
-          { title: 'My Account', icon: 'mdi-account' },
-          { title: 'Users', icon: 'mdi-account-group-outline' },
-        ],
         rail: true,
       }
     },
 	setup(props) {
+		const { currentUser } = useAuthModule();
+
+		const userName = computed(() => {
+			return currentUser.value?.userName;
+		});
 		const icons = {
 			list: mdiListBoxOutline,
 		}
 
 		return {
-			icons
+			icons,
+			userName
 		};
 	},
 };
@@ -116,5 +124,12 @@ export default {
 			transform: translate(-50%, -50%) rotate(45deg);
 		}
 	}
+}
+
+.user-icon {
+	transition: all .1s linear;
+}
+.user-icon--spacing {
+	margin-left: 6px;
 }
 </style>

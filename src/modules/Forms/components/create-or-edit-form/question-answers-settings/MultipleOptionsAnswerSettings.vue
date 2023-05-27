@@ -5,7 +5,7 @@
 				class="text-h5"
 				:class="{ 'text-disabled': !title }"
 			>
-				{{ title || 'Question title' }}
+				{{ title || 'Назва питання' }}
 			</p>
 		</v-col>
 		<v-col cols="2">
@@ -19,14 +19,15 @@
 
 		<v-col cols="12">
 			<v-checkbox
-				class="answer-check"
-				color="primary"
+				class="answer-check rounded"
+				:color="rightOptions.includes(option.id) ? 'success' : 'primary'"
+				hide-details
 				v-for="option in options"
 				v-model="rightOptions"
 				:key="option.id"
 				:value="option.id"
-				:label="option.text"
-				:class="{ 'right-option': rightOptions.includes(option.id) }"
+				:label="option.text || (option.isCustomAnswer && 'Напишіть власний варіант...' || '')"
+				:class="{ 'bg-green-lighten-4': rightOptions.includes(option.id) }"
 				@update:model-value="updateOptions()"
 			></v-checkbox>
 		</v-col>
@@ -86,27 +87,3 @@ export default {
 	}
 }
 </script>
-<style scoped lang="scss">
-.right-option {
-	background-color: #e0f2f1;
-	border-radius: 4px;
-	position: relative;
-
-	&:after {
-		width: 15px;
-		height: 8px;
-		border: solid #4caf50;
-		border-width: 0 0 2px 2px;
-		content: '';
-		position: absolute;
-		top: 50%;
-		right: 20px;
-		transform: translate(0, -50%) rotate(-45deg);
-	}
-}
-</style>
-<style>
-.answer-check .v-input__details {
-	display: none;
-}
-</style>

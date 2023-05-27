@@ -5,7 +5,7 @@
 				class="text-h5"
 				:class="{ 'text-disabled': !title }"
 			>
-				{{ title || 'Question title' }}
+				{{ title || 'Назва питання' }}
 			</p>
 		</v-col>
 		<v-col cols="2">
@@ -32,7 +32,6 @@
 					v-model="option.text"
 					variant="underlined"
 					color="primary"
-					:autofocus="true"
 					:value="option.isCustomAnswer ? 'Write your answer here...' : option.text"
 					@change="updateOptions"
 				></v-text-field>

@@ -2,33 +2,13 @@
 	<v-card class="px-5 py-5">
 		<v-row v-if="settings">
 			<v-col cols="12">
-				<div class="w-100 d-flex align-center justify-space-between mb-3">
-					<div>
-						<h6 class="text-h6">
-							Test
-						</h6>
-						<p class="text-subtitle-2">
-							Настройка максимальных баллов, указание ответов и автоматическая отправка отзывов
-						</p>
-					</div>
-					<v-switch
-						style="max-width: fit-content;"
-						color="primary"
-						value="primary"
-						hide-details
-						:true-value="true"
-						:false-value="false"
-						:model-value="settings.isTest"
-						@update:model-value="updateSettings('isTest', $event)"
-					></v-switch>
-				</div>
 				<div
 					v-if="settings.isTest"
 					class="pl-3"
 				>
 					<div class="mb-2">
 						<p class="text-subtitle-2 text-uppercase mb-1">
-							ПУБЛИКАЦИЯ ОЦЕНОК
+							Публікаця оцінок
 						</p>
 
 						<v-radio-group
@@ -36,106 +16,30 @@
 							@update:model-value="updateSettings('showResultsAfter', $event)"
 						>
 							<v-radio
-								label="После сдачи"
+								label="После здачі"
 								value="submission"
 							></v-radio>
 
 							<v-radio
-								label="После ручной проверки"
+								label="Після особистої перевірки"
 								value="check"
 							></v-radio>
 						</v-radio-group>
 					</div>
-
-					<!-- <div class="mb-2">
-						<p class="text-subtitle-2 text-uppercase mb-1">
-							НАСТРОЙКИ РЕСПОНДЕНТОВ
-						</p>
-
-						<div class="w-100 d-flex align-center justify-space-between mb-1">
-							<div>
-								<p class="text-body-1">
-									Незачтенные ответы
-								</p>
-								<p class="text-body-2">
-									Респонденты могут видеть, на какие вопросы даны неверные ответы.
-								</p>
-							</div>
-							<v-switch
-								style="max-width: fit-content;"
-								color="primary"
-								value="primary"
-								hide-details
-								:true-value="true"
-								:false-value="false"
-								:model-value="settings.showWrongAnswers"
-								@update:model-value="settings.setShowWrongAnswers"
-							></v-switch>
-						</div>
-						<div class="w-100 d-flex align-center justify-space-between mb-1">
-							<div>
-								<p class="text-body-1">
-									Правильные ответы
-								</p>
-								<p class="text-body-2">
-									Респондентам показываются правильные ответы после выставления оценок.
-								</p>
-							</div>
-							<v-switch
-								style="max-width: fit-content;"
-								color="primary"
-								value="primary"
-								hide-details
-								:true-value="true"
-								:false-value="false"
-								:model-value="settings.showCorrectAnswers"
-								@update:model-value="settings.setShowCorrectAnswers"
-							></v-switch>
-						</div>
-						<div class="w-100 d-flex align-center justify-space-between mb-1">
-							<div>
-								<p class="text-body-1">
-									Баллы за ответы
-								</p>
-								<p class="text-body-2">
-									Респондентам показываются как баллы, полученные за каждый вопрос, так и общее количество баллов.
-								</p>
-							</div>
-							<v-switch
-								style="max-width: fit-content;"
-								color="primary"
-								value="primary"
-								hide-details
-								:true-value="true"
-								:false-value="false"
-								:model-value="settings.showPointsPerQuestion"
-								@update:model-value="settings.setShowPointsPerQuestion"
-							></v-switch>
-						</div>
-					</div> -->
 				</div>
 
 				<v-divider></v-divider>
 			</v-col>
 
 			<v-col cols="12">
-				<div class="mb-3">
-					<h6 class="text-h6">
-						Презентация
-					</h6>
-					<p class="text-subtitle-2">
-						Управление представлением формы и ответов на ее вопросы.
-					</p>
-				</div>
-
 				<div class="mb-2">
 					<div class="w-100 d-flex align-center justify-space-between mb-1">
 						<div class="w-100">
 							<p class="text-body-1">
-								Ограничить время заполнения формы
+								Обмежити час заповнення форми
 							</p>
 							<p class="text-body-2 w-75">
-								Если вы раннее выставили максимальное время выполнения каждого вопроса, и при этом выставите общее время выполнения формы, то максимальное время выполнения каждого вопроса будет сброшено.
+								Якщо ви раніше виставили максимальний час виконання кожного питання, і при цьому виставите загальний час виконання форми, то максимальний час виконання кожного питання буде скинуто.
 							</p>
 						</div>
 
@@ -155,11 +59,11 @@
 						v-if="isGeneralTimeLimitActive"
 						class="d-flex align-center justify-space-start"
 					>
-						<!-- <ui-time-picker
+						<ui-time-picker
 							:dropDirection="'down'"
 							:model-value="settings.generalTimeLimit"
 							@update:model-value="setGeneralTimeLimit"
-						/> -->
+						/>
 					</div>
 				</div>
 
@@ -167,11 +71,11 @@
 					<div class="w-100 d-flex align-center justify-space-between mb-1">
 						<div class="w-100">
 							<p class="text-body-1">
-								Ограничить время выполнения каждого вопроса (по умолчанию)
+								Обмежити час виконання кожного питання (за замочвучанням)
 							</p>
 							<p class="text-body-2 w-75">
-								Если вы раннее выставили максимальное время заполнения формы, то оно будет сброшено. После активации данной опции
-								в дополнительных настройках каждого вопроса появится поле для ввода времени.
+								Якщо ви раніше виставили максимальний час заповнення форми, воно буде скинуто. Після активації цієї опції
+								у додаткових параметрах кожного питання з'явиться поле для введення часу.
 							</p>
 						</div>
 
@@ -201,10 +105,10 @@
 					<div class="w-100 d-flex align-center justify-space-between">
 						<div class="w-100">
 							<p class="text-body-1">
-								Перемешать вопросы
+								Перемішати питання
 							</p>
 							<p class="text-body-2 w-75">
-								Вопросы будут отображаться в случайном порядке.
+								Запитання відображатимуться у випадковому порядку.
 							</p>
 						</div>
 
@@ -221,44 +125,14 @@
 					</div>
 				</div>
 
-				<!-- <div class="mb-2">
-					<div class="w-100 d-flex align-center justify-space-between">
-						<div class="w-100">
-							<p class="text-body-1">
-								Вид отображения
-							</p>
-							<p class="text-body-2 w-75">
-								Выберите, как будут отображаться вопросы в форме.
-							</p>
-						</div>
-					</div>
-
-					<v-radio-group
-						:model-value="settings.formView"
-						@update:model-value="updateSettings('formView', $event)"
-					>
-						<v-radio
-							label="Список вопросов"
-							value="list"
-							:disabled="isQuestionTimeLimitActive"
-						></v-radio>
-
-						<v-radio
-							label="Каждый вопрос на отдельной странице"
-							value="steps"
-							:disabled="isQuestionTimeLimitActive"
-						></v-radio>
-					</v-radio-group>
-				</div> -->
-
 				<div class="mb-2">
 					<div class="w-100 d-flex align-center justify-space-between">
 						<div class="w-100">
 							<p class="text-body-1">
-								Текст после отправки формы
+								Текст після здачі форми
 							</p>
 							<p class="text-body-2 w-75">
-								Текст, который будет отображаться после отправки формы.
+								Текст, який відображатиметься після здачі форми.
 							</p>
 						</div>
 					</div>
@@ -272,37 +146,16 @@
 					></v-text-field>
 				</div>
 
-				<!-- <div class="mb-2">
-					<div class="w-100 d-flex align-center justify-space-between">
-						<div class="w-100">
-							<p class="text-body-1">
-								Текст после отправки формы
-							</p>
-							<p class="text-body-2 w-75">
-								Текст, который будет отображаться после отправки формы.
-							</p>
-						</div>
-					</div>
-
-					<v-text-field
-						style="max-width: 300px;"
-						label="Текст после отправки формы"
-						variant="underlined"
-						v-model="confirmText"
-						@change="onChange"
-					></v-text-field>
-				</div> -->
-
 				<v-divider></v-divider>
 			</v-col>
 
 			<v-col cols="12">
 				<div class="mb-3">
 					<h6 class="text-h6">
-						Общее
+						Загальне
 					</h6>
 					<p class="text-subtitle-2">
-						Общие настройки формы
+						Загальні налаштування форми
 					</p>
 				</div>
 
@@ -310,34 +163,10 @@
 					<div class="w-100 d-flex align-center justify-space-between mb-1">
 						<div class="w-100">
 							<p class="text-body-1">
-								Собирать электронные адреса
+								Дозволити надсилати форму лише один раз
 							</p>
 							<p class="text-body-2 w-75">
-								Если включено, то в форме будет поле для ввода электронного адреса.
-							</p>
-						</div>
-
-						<v-switch
-							style="max-width: fit-content;"
-							color="primary"
-							value="primary"
-							hide-details
-							:true-value="true"
-							:false-value="false"
-							:model-value="settings.pickEmail"
-							@update:model-value="updateSettings('pickEmail', $event)"
-						></v-switch>
-					</div>
-				</div>
-
-				<div class="mb-2">
-					<div class="w-100 d-flex align-center justify-space-between mb-1">
-						<div class="w-100">
-							<p class="text-body-1">
-								Позволить отправлять форму только один раз
-							</p>
-							<p class="text-body-2 w-75">
-								Если включено, то после отправки формы респондент не сможет отправить ее еще раз.
+								Якщо увімкнено, після відправлення форми респондент не зможе відправити її ще раз.
 							</p>
 						</div>
 
@@ -358,10 +187,10 @@
 					<div class="w-100 d-flex align-center justify-space-between mb-1">
 						<div class="w-100">
 							<p class="text-body-1">
-								Не принимать ответы
+								Не приймати відповіді
 							</p>
 							<p class="text-body-2 w-75">
-								Если включено, то форма будет недоступна для заполнения.
+								Якщо увімкнено, форма буде недоступна для заповнення.
 							</p>
 						</div>
 
@@ -382,10 +211,10 @@
 					<div class="w-100 d-flex align-center justify-space-between mb-1">
 						<div class="w-100">
 							<p class="text-body-1">
-								Все вопросы обязательны
+								Усі питання обов'язкові
 							</p>
 							<p class="text-body-2 w-75">
-								Если включено, то респондент не сможет отправить форму, если не ответит на все вопросы.
+								Якщо увімкнено, то респондент не зможе надіслати форму, якщо не відповість на всі запитання.
 							</p>
 						</div>
 
@@ -406,7 +235,7 @@
 	</v-card>
 </template>
 <script>
-import { ref, watch, onMounted } from 'vue';
+import { ref } from 'vue';
 
 
 export default {

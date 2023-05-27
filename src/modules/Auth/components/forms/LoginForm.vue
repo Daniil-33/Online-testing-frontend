@@ -3,18 +3,18 @@
 		<v-row justify="center">
 			<v-col xs="12" sm="12" md="12">
 				<v-card>
-					<v-card-title class="headline">Login</v-card-title>
+					<v-card-title class="headline">Авторизація</v-card-title>
 
 					<v-form ref="form">
 						<v-card-text>
 							<v-text-field
 								:error="!formManager.email.$valid && formManager.email.$touched"
 								:error-messages="[
-									...(formManager.email.$errors.required && formManager.email.$touched ? ['This field is required'] : []),
-									...(formManager.email.$errors.email && formManager.email.$touched ? ['Email is not valid'] : []),
+									...(formManager.email.$errors.required && formManager.email.$touched ? ['Це поле обов`язкове'] : []),
+									...(formManager.email.$errors.email && formManager.email.$touched ? ['Введіть коректну електронну пошту'] : []),
 								]"
 								v-model="formManager.email.model"
-								label="Email"
+								label="Електронна пошта"
 								type="email"
 								@blur="formManager.email.onFieldBlur"
 							/>
@@ -22,17 +22,17 @@
 							<v-text-field
 								:error="!formManager.password.$valid && formManager.password.$touched"
 								:error-messages="[
-									...(formManager.password.$errors.required && formManager.password.$touched ? ['This field is required'] : []),
+									...(formManager.password.$errors.required && formManager.password.$touched ? ['Це поле обов`язкове'] : []),
 								]"
 								v-model="formManager.password.model"
-								label="Password"
+								label="Пароль"
 								type="password"
 								@blur="formManager.password.onFieldBlur"
 							/>
 						</v-card-text>
 						<v-card-actions>
 							<v-spacer />
-							<v-btn color="primary" @click="onSubmit">Login</v-btn>
+							<v-btn color="primary" @click="onSubmit">Авторизуватися</v-btn>
 						</v-card-actions>
 					</v-form>
 				</v-card>

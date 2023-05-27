@@ -2,7 +2,7 @@
 	<v-row>
 		<v-col cols="10">
 			<p class="text-h5" :class="{ 'text-disabled': !title }">
-				{{ title || 'Question title' }}
+				{{ title || 'Назва питання' }}
 			</p>
 		</v-col>
 		<v-col cols="2">
@@ -45,8 +45,9 @@
 									>
 										<div class="td-inner py-1 px-1 td-content">
 											<v-radio
-												color="primary"
+												color="success"
 												label=""
+												:class="{ 'bg-green-lighten-4 rounded': rightOptions[row.id].id === col.id }"
 												:model-value="rightOptions[row.id].id"
 												:id="row.id"
 												:value="col.id"

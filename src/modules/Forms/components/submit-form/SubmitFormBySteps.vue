@@ -73,7 +73,7 @@
 				class="mr-2"
 				@click="prevQuestion"
 			>
-				Назад
+				Попереднє питання
 			</v-btn>
 
 			<v-btn
@@ -81,7 +81,7 @@
 				color="primary"
 				@click="nextQuestion(false)"
 			>
-				Следующий
+				Наступне питання
 			</v-btn>
 
 			<v-btn
@@ -89,7 +89,7 @@
 				color="primary"
 				@click="submit(false)"
 			>
-				Отправить
+				Відправити
 			</v-btn>
 		</div>
 	</div>
@@ -106,7 +106,7 @@ import {
 	MultipleOptionsGridAnswerRenderer,
 } from './question-renderers/'
 
-import { questionTypesReference } from '../../models/FormQuestion'
+import { questionTypesReference } from '../../composables/useFormManager'
 
 const questionTypesComponentReference = {
 	[questionTypesReference.SHORT_TEXT_ANSWER]: ShortTextAnswerRenderer,

@@ -5,7 +5,7 @@
 				class="text-h5"
 				:class="{ 'text-disabled': !title }"
 			>
-				{{ title || 'Question title' }}
+				{{ title || 'Назва питання' }}
 			</p>
 		</v-col>
 		<v-col cols="2">
@@ -23,12 +23,12 @@
 				@update:model-value="(rightOption = $event, updateOptions())"
 			>
 				<v-radio
-					color="primary"
+					color="success"
 					v-for="option in options"
 					:key="option.id"
 					:value="option.id"
 					:label="option.text"
-					:class="{ 'right-option': option.id === rightOption }"
+					:class="{ 'bg-green-lighten-4 rounded': option.id === rightOption }"
 				></v-radio>
 			</v-radio-group>
 		</v-col>

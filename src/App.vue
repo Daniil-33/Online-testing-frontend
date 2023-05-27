@@ -1,7 +1,9 @@
 <template>
 	<v-app>
 		<v-main>
-			<component :is="layoutName">
+			<component
+				:is="layoutName"
+			>
 				<template v-if="!isAuth">
 					<Auth />
 				</template>
@@ -9,6 +11,8 @@
 					<router-view />
 				</template>
 			</component>
+
+			<NotificationProvider />
 		</v-main>
 	</v-app>
 </template>
@@ -18,6 +22,8 @@ import { Auth, useAuthModule } from '@/modules/Auth/'
 import DefaultLayout from './layouts/DefaultLayout.vue';
 import EmptyLayout from './layouts/EmptyLayout.vue';
 
+import NotificationProvider from '@/components/providers/NotificationProvider.vue'
+
 import { computed } from 'vue';
 
 export default {
@@ -25,7 +31,8 @@ export default {
 	components: {
 		Auth,
 		DefaultLayout,
-		EmptyLayout
+		EmptyLayout,
+		NotificationProvider,
 	},
 	setup() {
 		const { isAuth } = useAuthModule();

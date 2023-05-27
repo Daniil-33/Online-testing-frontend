@@ -10,7 +10,7 @@
 			:class="{ 'mt-3': index !== 0 }"
 			:question="question"
 			:isFocused="focusedQuestion === question.id"
-			:isTestModeActive="isTestModeActive"
+			:isTimeLimitActive="isTimeLimitActive"
 			@remove:question="removeQuestion(index)"
 			@duplicate:question="duplicateQuestion(index)"
 			@update:question="updateQuestion(question.id, $event)"
@@ -23,7 +23,7 @@
 			<v-btn @click="addQuestion(index)">
 				<v-icon left>mdi-plus</v-icon>
 
-				Add Question
+				Додати питання
 			</v-btn>
 		</div>
 	</div>
@@ -34,7 +34,7 @@
 	>
 		<v-btn @click="addQuestion(null)">
 			<v-icon left>mdi-plus</v-icon>
-			Add Question
+			Додати питання
 		</v-btn>
 	</div>
 </template>
@@ -52,7 +52,7 @@ export default {
 			type: Array,
 			default: () => []
 		},
-		isTestModeActive: {
+		isTimeLimitActive: {
 			type: Boolean,
 			default: () => false
 		}

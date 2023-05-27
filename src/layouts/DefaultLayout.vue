@@ -2,7 +2,7 @@
 	<div class="w-100 h-screen overflow-hidden">
 		<SidebarWidget/>
 
-		<div class="px-3 py-3">
+		<div class="px-3 py-3 h-100">
 			<slot></slot>
 		</div>
 	</div>

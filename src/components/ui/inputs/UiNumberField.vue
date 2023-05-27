@@ -1,19 +1,30 @@
 <template>
-	<v-text-field
-		variant="underlined"
-		color="primary"
-		class="ui-number-field"
-		:label="label"
-		:model-value="modelValue"
-		@update:model-value="updateValue"
-	>
-		<template #append>
-			<div class="d-flex flex-column">
-				<v-icon size="x-small" @click="updateValue(modelValue + 1)">mdi-plus</v-icon>
-				<v-icon size="x-small" @click="updateValue(modelValue - 1)">mdi-minus</v-icon>
-			</div>
-		</template>
-	</v-text-field>
+	<!-- <div class="d-flex align-center">
+		<div>
+			<v-text-field
+				variant="underlined"
+				color="primary"
+				class="ui-number-field"
+				hide-details
+				:model-value="modelValue"
+				@update:model-value="updateValue"
+			>
+			</v-text-field>
+		</div>
+		<div class="d-flex flex-column">
+			<v-icon size="x-small" @click="updateValue(modelValue + 1)">mdi-plus</v-icon>
+			<v-icon size="x-small" @click="updateValue(modelValue - 1)">mdi-minus</v-icon>
+		</div>
+	</div> -->
+
+	<div class="ui-number-field">
+		<input
+			type="number"
+			:value="modelValue"
+			:min="min"
+			@change="updateValue($event.target.value)"
+		>
+	</div>
 </template>
 <script>
 export default {
@@ -50,3 +61,24 @@ export default {
 	},
 }
 </script>
+<style lang="scss">
+.ui-number-field {
+	& input {
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		padding-left: 4px;
+		font-size: 12px;
+
+		max-width: 100%;
+		width: 100%;
+		display: block;
+		box-sizing: border-box;
+		transition: all .2s linear;
+	}
+
+	& input:focus {
+		outline: none;
+		border-color: rgb(var(--v-theme-primary));
+	}
+}
+</style>
