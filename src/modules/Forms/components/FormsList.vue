@@ -102,11 +102,12 @@
 <script>
 import ConfirmDeleteModal from '@/components/modals/ConfirmDeleteModal.vue';
 
-import useForm from '../composables/useForm';
+import useForm from '../composables/data/useForm';
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { formatDate } from '@/helpers/dateHelper'
-import { safeAsyncCall } from '@/helpers/utilsHelper'
+import { safeAsyncCall, copyToClipboard } from '@/helpers/utilsHelper'
+import { useApplicationStore } from '@/stores/applicationStore';
 
 export default {
 	name: 'FormsListView',
@@ -122,6 +123,8 @@ export default {
 			getFormsList,
 			deleteForm,
 		} = useForm()
+
+		const { addSuccessNotify } = useApplicationStore()
 
 		const isLoadingCrashed = ref(false)
 		const isLoading = computed(() => loadingFlags.getForm)
@@ -141,6 +144,15 @@ export default {
 			await deleteForm(id)
 
 			confirmModal.value.closeModal()
+		}
+
+		const copyFormUrl = (id) => {
+			const routeData = router.resolve({ name: 'Submit Form', params: { id } });
+
+			copyToClipboard(`${window.location.origin}${routeData.href}`)
+			addSuccessNotify({
+				text: 'Посилання на форму скопійовано.'
+			})
 		}
 
 		const onNewFormClick = () => {
@@ -167,6 +179,11 @@ export default {
 				title: 'Переглянути у новій вкладці',
 				icon: 'mdi-open-in-new',
 				to: (id) => ({ name: 'Submit Form', params: { id } }),
+			},
+			{
+				title: 'Копіювати посилання на форму',
+				icon: 'mdi-content-copy',
+				action: copyFormUrl,
 			},
 			{
 				title: 'Видалити',

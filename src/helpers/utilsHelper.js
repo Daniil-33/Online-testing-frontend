@@ -36,3 +36,7 @@ export function safeAsyncCall(promise) {
 		.then((data) => [null, data])
 		.catch((error) => [error, null])
 }
+
+export function copyToClipboard(string) {
+	navigator.clipboard.writeText(string);
+}

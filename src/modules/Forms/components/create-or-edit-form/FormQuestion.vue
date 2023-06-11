@@ -254,14 +254,14 @@ export default {
 		const selectedQuestionTypeRightAnswerComponent = computed(() => questionTypesComponentsReference.find(({ value }) => value === props.question.type).settingRightAnswersComponentName);
 		const title = computed(() => props.question.title)
 		const type = computed(() => props.question.type)
-		const isRequired = computed(() => props.question.required)
+		const isRequired = computed(() => props.question.isRequired)
 		const content = computed(() => props.question.content)
 		const timeLimit = computed(() => props.question.timeLimit)
 		const questionPoints = computed(() => {
 			if (props.question.answerSettings?.points === undefined) {
-				return Object.values(props.question.answerSettings || {}).reduce((acc, { points }) => acc + points, 0)
+				return Object.values(props.question.answerSettings || {}).reduce((acc, { points }) => acc + parseFloat(points), 0)
 			} else {
-				return props.question.answerSettings?.points
+				return parseFloat(props.question.answerSettings?.points)
 			}
 		})
 		const questionAnswerSettings = computed(() => props.question.answerSettings)

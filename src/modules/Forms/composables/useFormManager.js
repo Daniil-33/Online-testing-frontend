@@ -96,7 +96,7 @@ export function useFormManager() {
 		generalTimeLimit: 0, // 0 means no limit
 		questionDefaultTimeLimit: 0, // 0 means no limit
 		mixQuestions: false,
-		confirmText: 'Your answers have been submitted.',
+		confirmText: 'Ваш результат записаний.',
 		doNotAcceptSubmissions: false,
 		formView: 'list', // 'list' | 'steps'
 

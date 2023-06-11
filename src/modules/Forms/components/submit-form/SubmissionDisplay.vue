@@ -105,7 +105,7 @@ export default {
 	},
 	emits: ['update:answer-points'],
 	setup(props, { emit }) {
-		const modelValues = ref(Object.fromEntries(props.submission.questions.map(question => {
+		const modelValues = ref(Object.fromEntries((props.submission.questions || []).map(question => {
 			switch (question.type) {
 				case questionTypesReference.SINGLE_OPTION:
 				case questionTypesReference.MULTIPLE_OPTIONS:
@@ -118,8 +118,8 @@ export default {
 			}
 		})))
 
-		const pointsData = computed(() => props.submission.points)
-		const maxPointsData = computed(() => Object.fromEntries(props.submission.questions.map(question => [ question.id, question.answerData.maxPoints])))
+		const pointsData = computed(() => props.submission.points || {})
+		const maxPointsData = computed(() => Object.fromEntries((props.submission.questions || []).map(question => [ question.id, question.answerData.maxPoints])))
 
 		const onUpdateAnswerPoints = (questionId, points) => {
 			emit('update:answer-points', [questionId, points])

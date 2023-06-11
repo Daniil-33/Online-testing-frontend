@@ -1,4 +1,4 @@
-import ApiService from '../api/';
+import ApiService from '../../api/';
 import { ref, reactive, computed, watch } from 'vue';
 import { useApplicationStore } from '@/stores/applicationStore';
 import { parseError } from '@/helpers/request-error-parser';

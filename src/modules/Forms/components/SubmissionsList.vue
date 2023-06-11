@@ -111,19 +111,14 @@
 </template>
 
 <script>
-import SubmissionsListItem from './submissions-list/SubmissionListItem.vue';
-
 import { computed, ref } from 'vue'
-import useSubmissions from '../composables/useSubmissions'
+import useSubmissions from '../composables/data/useSubmissions'
 import { formatDate } from '@/helpers/dateHelper'
 import { safeAsyncCall } from '@/helpers/utilsHelper'
 import { useRouter } from 'vue-router'
 
 export default {
 	name: 'SubmissionsList',
-	components: {
-		SubmissionsListItem,
-	},
 	setup(props) {
 		const router = useRouter()
 		const {
@@ -134,6 +129,7 @@ export default {
 
 		const isLoadingCrashed = ref(false)
 		const loadData = async () => {
+			isLoadingCrashed.value = false
 			const [error, result] = await safeAsyncCall(getSubmissions())
 
 			if (error) {

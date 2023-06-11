@@ -28,7 +28,7 @@
 </template>
 <script>
 import SubmissionDisplay from './submit-form/SubmissionDisplay.vue';
-import useSubmissions from '../composables/useSubmissions';
+import useSubmissions from '../composables/data/useSubmissions';
 import { safeAsyncCall } from '@/helpers/utilsHelper'
 import { computed, ref } from 'vue';
 
@@ -52,6 +52,7 @@ export default {
 
 		const isLoadingCrashed = ref(false);
 		const loadData = async () => {
+			isLoadingCrashed.value = false;
 			const [error, result] = await safeAsyncCall(getSubmission(props.submissionId));
 
 			if(error) {
@@ -64,7 +65,7 @@ export default {
 			return (submission.value?.formData.settings.showResultsAfter === 'check' && submission.value.isChecked) || submission.value?.formData.settings.showResultsAfter === 'submit'
 		})
 
-		getSubmission(props.submissionId)
+		loadData()
 
 		return {
 			isLoading,

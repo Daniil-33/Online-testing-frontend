@@ -62,6 +62,13 @@
 						></component>
 					</div>
 				</template>
+
+				<div
+					v-if="currentQuestionRequiredError && isTouchedByValidator"
+					class="pt-2"
+				>
+					<p class="text-red">Це обов`язкове питання</p>
+				</div>
 			</div>
 		</div>
 
@@ -173,6 +180,7 @@ export default {
 			if (currentInterval) clearInterval(currentInterval)
 
 			let timeoutStartedAt = Date.now()
+			let timeoutValue = props.formConfig.questions[currentQuestionIndex.value].timeLimit || props.formConfig.settings.questionDefaultTimeLimit
 			timeProgress.value = 0
 
 			let newTimeout = setTimeout(() => {
@@ -181,11 +189,11 @@ export default {
 				} else {
 					nextQuestion(true)
 				}
-			}, props.formConfig.settings.questionDefaultTimeLimit)
+			}, timeoutValue)
 
 			let newInterval = setInterval(() => {
-				timerValue.value = formatTimerValue(props.formConfig.settings.questionDefaultTimeLimit - (Date.now() - timeoutStartedAt))
-				timeProgress.value = Math.ceil((Date.now() - timeoutStartedAt) / props.formConfig.settings.questionDefaultTimeLimit * 100)
+				timerValue.value = formatTimerValue(timeoutValue - (Date.now() - timeoutStartedAt))
+				timeProgress.value = Math.ceil((Date.now() - timeoutStartedAt) / timeoutValue * 100)
 			}, 100)
 
 			return [ newTimeout, newInterval ]

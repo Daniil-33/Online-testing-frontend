@@ -48,6 +48,13 @@
 					v-model="values[question.id]"
 					:is="questionTypesComponentReference[question.type]"
 				></component>
+
+				<div
+					v-if="errors?.[question.id]?.required && isTouchedByValidator"
+					class="pt-2"
+				>
+					<p class="text-red">Це обов`язкове питання</p>
+				</div>
 			</div>
 		</template>
 

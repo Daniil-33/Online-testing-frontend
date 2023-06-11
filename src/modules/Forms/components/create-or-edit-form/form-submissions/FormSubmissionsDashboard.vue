@@ -10,7 +10,10 @@
 			></v-progress-circular>
 		</div>
 	</div>
-	<div v-else-if="form.submissions.length">
+	<div v-else-if="isLoadingCrashed">
+		<p class="text-h4 text-center">Щось пішло не так...</p>
+	</div>
+	<div v-else-if="formSubmissionsAnalytic.submissions.length">
 		<div class="submissions-dashboard">
 			<div class="submissions-dashboard__charts-widgets px-3 py-3 mt-3 rounded">
 				<v-card class="px-2 py-1 mr-2">
@@ -61,11 +64,11 @@
 </template>
 <script>
 import Chart from 'chart.js/auto';
-import useForm from '@/modules/Forms/composables/useForm';
+import useForm from '@/modules/Forms/composables/data/useForm';
 
-import { range } from '@/helpers/utilsHelper'
+import { range, safeAsyncCall } from '@/helpers/utilsHelper'
 
-import { ref, computed } from 'vue';
+import { ref, computed, nextTick } from 'vue';
 export default {
 	name: 'FormSubmissionsDashboard',
 	props: {
@@ -113,7 +116,7 @@ export default {
 				}
 			}
 
-			const xValues = [`Перевірено робіт із ${props.form.submissions.length}`, `НЕ перевірено робіт із ${props.form.submissions.length}`]
+			const xValues = [`Перевірено робіт із ${formSubmissionsAnalytic.value.submissions.length}`, `НЕ перевірено робіт із ${formSubmissionsAnalytic.value.submissions.length}`]
 			const yValues = [formSubmissionsAnalytic.value.checkedCount, formSubmissionsAnalytic.value.uncheckedCount]
 
 			return {
@@ -148,8 +151,10 @@ export default {
 			}
 		})
 
-		const renderLineChartByPoints = (xValues, yValues) => {
-			const ctx = lineChart.value.getContext('2d');
+		const renderLineChartByPoints = (canvas, xValues, yValues) => {
+			if (!canvas) return;
+
+			const ctx = canvas.getContext('2d');
 
 			new Chart(ctx, {
 				type: "line",
@@ -201,8 +206,10 @@ export default {
 			});
 		}
 
-		const renderPieChartByChecks = (xValues, yValues) => {
-			const ctx = pieChart.value.getContext('2d');
+		const renderPieChartByChecks = (canvas, xValues, yValues) => {
+			if (!canvas) return;
+
+			const ctx = canvas.getContext('2d');
 
 			new Chart(ctx, {
 				type: "doughnut",
@@ -228,17 +235,17 @@ export default {
 			});
 		}
 
-		const renderBarChartByAveragePoints = (xValues, yValues) => {
-			const ctx = barChart.value.getContext('2d');
+		const renderBarChartByAveragePoints = (canvas, xValues, yValues) => {
+			if (!canvas) return;
 
-			var barColors = ["#FF1744", "#FFEA00", '#00E676', '#2979ff'];
+			const ctx = canvas.getContext('2d');
 
 			new Chart(ctx, {
 				type: "bar",
 				data: {
 					labels: xValues,
 					datasets: [{
-					backgroundColor: barColors,
+					backgroundColor: ["#FF1744", "#FFEA00", '#00E676', '#2979ff'],
 					data: yValues
 					}]
 				},
@@ -262,15 +269,20 @@ export default {
 			});
 		}
 
-
+		const isLoadingCrashed = ref(false)
 		const loadData = async () => {
-			await getFormSubmissionsAnalytic(props.form._id)
+			isLoadingCrashed.value = false;
+			const [error, result] = await safeAsyncCall(getFormSubmissionsAnalytic(props.form._id))
 
-			setTimeout(() => {
-				renderLineChartByPoints(lineChartData.value.xValues, lineChartData.value.yValues)
-				renderPieChartByChecks(pieChartData.value.xValues, pieChartData.value.yValues)
-				renderBarChartByAveragePoints(barChartData.value.xValues, barChartData.value.yValues)
-			}, 100)
+			if (error) {
+				isLoadingCrashed.value = true
+			}
+
+			nextTick(() => setTimeout(() => {
+				renderLineChartByPoints(lineChart.value,lineChartData.value.xValues, lineChartData.value.yValues)
+				renderPieChartByChecks(pieChart.value, pieChartData.value.xValues, pieChartData.value.yValues)
+				renderBarChartByAveragePoints(barChart.value, barChartData.value.xValues, barChartData.value.yValues)
+			}, 100))
 		}
 
 		loadData()
@@ -281,6 +293,7 @@ export default {
 			pieChart,
 			barChart,
 
+			isLoadingCrashed,
 			formSubmissionsAnalytic,
 		}
 	}

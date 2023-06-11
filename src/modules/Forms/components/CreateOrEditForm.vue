@@ -9,9 +9,7 @@
 						v-if="isEditing"
 						class="ml-2"
 						size="small"
-						:loading="isSaving"
-						:disabled="isSaving"
-						@click="onSaveHandler"
+						@click="onViewHandler"
 					>
 						<v-icon icon="mdi-open-in-new" left/>
 
@@ -21,9 +19,9 @@
 						v-if="isEditing"
 						class="ml-2"
 						size="small"
-						:loading="isSaving"
-						:disabled="isSaving"
-						@click="onSaveHandler"
+						:loading="isLoading"
+						:disabled="isLoading"
+						@click="loadData"
 					>
 						<v-icon icon="mdi-refresh" left/>
 
@@ -141,7 +139,7 @@ import FormSettings from './create-or-edit-form/FormSettings.vue';
 import FormSubmissions from './create-or-edit-form/FormSubmissions.vue';
 
 import { useFormManager } from '../composables/useFormManager';
-import useForm from '../composables/useForm'
+import useForm from '../composables/data/useForm'
 
 import { ref, computed, watch, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
@@ -211,8 +209,13 @@ export default {
 			getForm,
 		} = useForm()
 
+		const isLoading = computed(() => loadingFlags.getForm);
+		const isSaving = computed(() => loadingFlags.updateForm);
+		const isFormObjectReady = ref(false);
+
 		const isLoadingCrashed = ref(false)
 		const loadData = async () => {
+			isFormObjectReady.value = false;
 			const [error, result] = await safeAsyncCall(getForm(props.formId))
 
 			if (error) {
@@ -228,10 +231,6 @@ export default {
 			loadData()
 		}
 
-		const isLoading = computed(() => loadingFlags.getForm);
-		const isSaving = computed(() => loadingFlags.updateForm);
-		const isFormObjectReady = ref(false);
-
 		const onSaveHandler = () => {
 			safeAsyncCall(updateForm({
 				id: props.formId,
@@ -239,9 +238,15 @@ export default {
 			}))
 		}
 
+		const onViewHandler = () => {
+			const routeData = router.resolve({ name: 'Submit Form', params: { id: props.formId } });
+
+			window.open(routeData.href, '_blank');
+		}
+
 		onMounted(async () => {
 			if (!isEditing.value) {
-				const formId = await addForm(toConfig())
+				const [error, formId] = await safeAsyncCall(addForm(toConfig()))
 
 				router.push({
 					name: 'Edit Form',
@@ -276,7 +281,9 @@ export default {
 			isLoading,
 			isFormObjectReady,
 
-			onSaveHandler
+			onSaveHandler,
+			onViewHandler,
+			loadData
 		};
 	}
 };

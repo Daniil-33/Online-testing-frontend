@@ -55,7 +55,14 @@
 						</v-card-text>
 						<v-card-actions>
 							<v-spacer />
-							<v-btn color="primary" @click="onSubmit">Зареєструватися</v-btn>
+							<v-btn
+								color="primary"
+								:loading="isLoading"
+								:disabled="isLoading"
+								@click="onSubmit"
+							>
+								Зареєструватися
+							</v-btn>
 						</v-card-actions>
 					</v-form>
 				</v-card>
@@ -68,11 +75,13 @@
 import useAuth from '../../composables/useAuth';
 import FormManager from '@/services/formManager/formManagerService';
 import { required, email, minLength } from '@/services/formManager/formValidators';
+import { computed } from 'vue';
 
 export default {
 	name: 'RegisterForm',
 	setup(props, { expose }) {
-		const { register } = useAuth();
+		const { loadingFlags, register } = useAuth();
+		const isLoading = computed(() => loadingFlags.isRegister);
 
 		const formOptions = {
 			fields: {
@@ -141,6 +150,7 @@ export default {
 
 		return {
 			formManager,
+			isLoading,
 			onSubmit
 		}
 	}

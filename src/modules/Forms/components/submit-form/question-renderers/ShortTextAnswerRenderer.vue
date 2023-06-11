@@ -25,18 +25,25 @@
 
 		<div
 			class="w-100 rounded"
-			:class="(settingPoints || showPointsAndAnswers) ? `px-1 py-1 bg-${pointsData === 0 ? 'red-lighten-4' : 'green-lighten-4'}` : ''"
+			:class="(settingPoints || showPointsAndAnswers) ? `px-1 py-1 bg-${isCorrectAnswer ? 'green-lighten-4' : 'red-lighten-4'}` : ''"
 		>
 			<v-text-field
 				class="rounded"
-				label="Short answer"
+				label="Коротка відповідь"
 				variant="underlined"
 				hide-details
-				:color="(settingPoints || showPointsAndAnswers) ? (pointsData === 0 ? 'red' : 'green') : 'primary'"
+				:color="(settingPoints || showPointsAndAnswers) ? (isCorrectAnswer ? 'green' : 'red') : 'primary'"
 				:readonly="isViewingAnswer"
 				:model-value="modelValue"
 				@update:model-value="setValue"
 			></v-text-field>
+
+			<div
+				v-if="settingPoints || showPointsAndAnswers"
+				class="pt-2 text-green"
+			>
+				{{ correctAnswers }}
+			</div>
 		</div>
 	</div>
 </template>
@@ -58,10 +65,6 @@ export default {
 			type: Boolean,
 			default: () => false
 		},
-		isCorrectAnswer: {
-			type: Boolean,
-			default: () => false
-		},
 		settingPoints: {
 			type: Boolean,
 			default: false
@@ -74,6 +77,10 @@ export default {
 			type: Number,
 			default: 0
 		},
+		correctAnswersData: {
+			type: [Array, Object],
+			default: () => ([])
+		},
 	},
 	emits: {
 		'update:model-value': null,
@@ -83,6 +90,11 @@ export default {
 	setup(props, { emit }) {
 		const isAnswerFilled = computed(() => {
 			return props.modelValue !== ''
+		})
+
+		const correctAnswers = computed(() => (props.correctAnswersData || []).join(', '))
+		const isCorrectAnswer = computed(() => {
+			return props.correctAnswersData.map(text => text.trim().toLowerCase()).includes((props.modelValue || '').trim().toLowerCase())
 		})
 
 		const isAnswered = () => {
@@ -114,6 +126,8 @@ export default {
 			setValue,
 			isAnswered,
 			updateAnswerPoints,
+			correctAnswers,
+			isCorrectAnswer,
 		}
 	}
 }

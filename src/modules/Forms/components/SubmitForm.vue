@@ -46,7 +46,7 @@
 import SubmitFormSimple from './submit-form/SubmitFormSimple.vue';
 import SubmitFormBySteps from './submit-form/SubmitFormBySteps.vue';
 
-import useForm from '../composables/useForm'
+import useForm from '../composables/data/useForm'
 import { safeAsyncCall } from '@/helpers/utilsHelper'
 import { computed, ref } from 'vue';
 
@@ -72,6 +72,7 @@ export default {
 
 		const isLoadingCrashed = ref(false);
 		const loadData = async () => {
+			isLoadingCrashed.value = false;
 			const [error, result] = await safeAsyncCall(getFormForSubmission(props.formId));
 
 			if(error) {

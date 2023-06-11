@@ -42,8 +42,9 @@
 							:value="option.id"
 							:label="option.text"
 						></v-radio>
+
 						<v-text-field
-							label=""
+							placeholder="Своя відповідь"
 							hide-details
 							variant="underlined"
 							color="primary"
@@ -87,10 +88,6 @@ export default {
 			default: () => false
 		},
 		showPointsAndAnswers: {
-			type: Boolean,
-			default: () => false
-		},
-		isCorrectAnswer: {
 			type: Boolean,
 			default: () => false
 		},

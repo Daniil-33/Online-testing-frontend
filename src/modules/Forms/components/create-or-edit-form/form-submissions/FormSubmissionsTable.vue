@@ -11,7 +11,11 @@
 		</div>
 	</div>
 
-	<v-table v-else>
+	<div v-else-if="isLoadingListCrashed">
+		<p class="text-h4 text-center">Щось пішло не так...</p>
+	</div>
+
+	<v-table v-else-if="formSubmissionsList.length">
 		<thead>
 			<tr>
 				<th>№</th>
@@ -80,9 +84,13 @@
 		</tbody>
 	</v-table>
 
+	<div v-else>
+		<p class="text-h4 text-center">Форма ще не має результатів</p>
+	</div>
+
 	<v-dialog
 		v-model="isViewingSubmission"
-		width="auto"
+		width="1000px"
     >
 	  <v-card>
 		<v-card-title>
@@ -100,7 +108,7 @@
 		</v-card-title>
 
 		<v-card-text>
-			<template v-if="isLoadingSingleSubmission">
+			<template v-if="isLoadingSingleSubmission || !canRenderReviewWindow">
 				<div class="loader-fill-height">
 					<div class="d-flex align-center h-100 w-100 justify-center">
 						<v-progress-circular
@@ -142,14 +150,15 @@
 	/>
 </template>
 <script>
-import useSubmissions from '../../../composables/useSubmissions';
-import useForm from '../../../composables/useForm';
+import useSubmissions from '../../../composables/data/useSubmissions';
+import useForm from '../../../composables/data/useForm';
 
 import ConfirmDeleteModal from '@/components/modals/ConfirmDeleteModal.vue';
 import SubmissionDisplay from '../../submit-form/SubmissionDisplay.vue';
 
 import { formatDate } from '@/helpers/dateHelper';
 import { ref, computed } from 'vue';
+import { safeAsyncCall } from '@/helpers/utilsHelper';
 
 export default {
 	name: 'FormSubmissionsTable',
@@ -183,6 +192,7 @@ export default {
 		const confirmModal = ref(null);
 		const singleLoadedSubmissions = ref({});
 		const isViewingSubmission = ref(false);
+		const canRenderReviewWindow = ref(false);
 
 		const viewingSubmission = ref({});
 		const currentViewingSubmissionPointsData = ref({});
@@ -202,7 +212,11 @@ export default {
 		}
 
 		const onUpdatePointsClick = async () => {
-			await updateSubmissionPoints(viewingSubmission.value._id, currentViewingSubmissionPointsData.value);
+			const [error, result] = await safeAsyncCall(updateSubmissionPoints(viewingSubmission.value._id, currentViewingSubmissionPointsData.value));
+
+			if (error) {
+				return;
+			}
 
 			isViewingSubmission.value = false;
 
@@ -214,12 +228,19 @@ export default {
 		const isUpdatingPoints = computed(() => submissionLoadingFlags.updateSubmissionPoints);
 		const isLoadingSingleSubmission = computed(() => submissionLoadingFlags.getSubmission);
 
-		getFormSubmissions(props.form._id)
-
-		const loadList = () => {
+		const isLoadingCrashed = ref(false);
+		const loadList = async () => {
+			isLoadingCrashed.value = false;
 			singleLoadedSubmissions.value = {};
-			getFormSubmissions(props.form._id)
+
+			const [error, result] = await safeAsyncCall(getFormSubmissions(props.form._id))
+
+			if (error) {
+				isLoadingCrashed.value = true;
+			}
 		}
+
+		loadList()
 
 		const onActionClick = (action, submissionId) => {
 			switch (action) {
@@ -240,27 +261,40 @@ export default {
 
 			if (!isConfirmed) return
 
-			await deleteFormSubmission(props.form._id, submissionId);
+			const [error, result] = await safeAsyncCall(deleteFormSubmission(props.form._id, submissionId));
 
 			confirmModal.value.closeModal();
+
+			if (error) {
+				return;
+			}
 
 			loadList();
 		}
 
 		const onCheckOutClick = async (submissionId) => {
 			isViewingSubmission.value = true;
+			canRenderReviewWindow.value = false;
 
 			if (singleLoadedSubmissions.value[submissionId]) {
 				viewingSubmission.value = singleLoadedSubmissions.value[submissionId];
+				canRenderReviewWindow.value = true;
+
 				return;
 			} else {
-				await getSubmission(submissionId);
+				const [error, result] = await safeAsyncCall(getSubmission(submissionId));
+
+				if (error) {
+					isViewingSubmission.value = true;
+					return;
+				}
 
 				singleLoadedSubmissions.value[submissionId] = { ...submission.value };
 				viewingSubmission.value = singleLoadedSubmissions.value[submissionId];
 			}
 
-			currentViewingSubmissionPointsData.value = viewingSubmission.value.submissionData.points;
+			currentViewingSubmissionPointsData.value = viewingSubmission.value.points;
+			canRenderReviewWindow.value = true;
 		}
 
 		const actionsOptions = [
@@ -285,7 +319,9 @@ export default {
 			viewingSubmissionWithMutatedPoints,
 			isViewingSubmission,
 			isLoadingSingleSubmission,
+			canRenderReviewWindow,
 			isUpdatingPoints,
+			isLoadingCrashed,
 			formatDate,
 			onChangeAnswerPoints,
 			onUpdatePointsClick,

@@ -21,7 +21,7 @@
 					v-model="option.text"
 					variant="underlined"
 					color="primary"
-					:value="option.isCustomAnswer ? 'Write your answer here...' : option.text"
+					:value="option.isCustomAnswer ? 'Напишіть власний варіант...' : option.text"
 					:disabled="option.isCustomAnswer"
 					@change="updateOptions"
 				></v-text-field>

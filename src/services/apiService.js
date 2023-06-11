@@ -1,8 +1,10 @@
 import getRequestServiceInstance from './requestService.js';
 
 export default class ApiService {
-	constructor(config, moduleName) {
-		this.moduleName = moduleName;
+	constructor(config, options={}) {
+		this.options = {
+			allowUnauthorized: options.allowUnauthorized || false,
+		};
 		this.config = config;
 		this.requestService = getRequestServiceInstance();
 	}
@@ -41,7 +43,7 @@ export default class ApiService {
 			throw new Error(`Endpoint ${endpointName} not found`);
 		}
 
-		if (!this.requestService.isAccessTokenExist() && this.moduleName !== 'auth') {
+		if (!this.requestService.isAccessTokenExist() && !this.options.allowUnauthorized) {
 			throw new Error('Access token was not set');
 		}
 

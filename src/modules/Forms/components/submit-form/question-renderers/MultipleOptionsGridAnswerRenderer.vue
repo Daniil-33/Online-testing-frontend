@@ -17,7 +17,7 @@
 							</th>
 							<th v-if="settingPoints || showPointsAndAnswers">
 								<div class="td-inner px-2">
-									Оценка
+									Оцінка
 								</div>
 							</th>
 						</tr>
@@ -67,7 +67,7 @@
 
 											<template v-else-if="showPointsAndAnswers">
 												<p class="pl-2">
-													<span :class="{ 'text-orange': pointsData[row.id] > maxPointsData[row.id] }">{{ pointsData[row.id] }}</span>
+													<span :class="{ 'text-orange': pointsData[row.id] > maxPointsData[row.id] }">{{ pointsData[row.id] || 0 }}</span>
 													/ {{ maxPointsData[row.id] }}
 												</p>
 											</template>
@@ -110,10 +110,6 @@ export default {
 			default: () => false
 		},
 		showPointsAndAnswers: {
-			type: Boolean,
-			default: () => false
-		},
-		isCorrectAnswer: {
 			type: Boolean,
 			default: () => false
 		},

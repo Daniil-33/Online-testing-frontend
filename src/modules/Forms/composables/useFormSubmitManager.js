@@ -103,11 +103,11 @@ export default function useFormSubmitManager(props, { emit }) {
 	const submitForm = (successValidationCallback, isTimeOut) => {
 		validateAllAnswers(true)
 
-		if (Object.values(errors.value).some((error) => Object.values(error).some((errorValue) => errorValue)) && !isTimeOut) {
-			return
-		}
+		const hasErrors = Object.values(errors.value).some((error) => Object.values(error).some((errorValue) => errorValue))
 
-		successValidationCallback(values.value)
+		if (!hasErrors || isTimeOut) {
+			successValidationCallback(values.value)
+		}
 	}
 
 	return {

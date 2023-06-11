@@ -32,7 +32,14 @@
 						</v-card-text>
 						<v-card-actions>
 							<v-spacer />
-							<v-btn color="primary" @click="onSubmit">Авторизуватися</v-btn>
+							<v-btn
+								color="primary"
+								:loading="isLoading"
+								:disabled="isLoading"
+								@click="onSubmit"
+							>
+								Авторизуватися
+							</v-btn>
 						</v-card-actions>
 					</v-form>
 				</v-card>
@@ -45,11 +52,13 @@
 import useAuth from '../../composables/useAuth';
 import FormManager from '@/services/formManager/formManagerService';
 import { required, email } from '@/services/formManager/formValidators';
+import { computed } from 'vue';
 
 export default {
 	name: 'LoginForm',
 	setup(props, { expose }) {
-		const { login } = useAuth();
+		const { loadingFlags, login } = useAuth();
+		const isLoading = computed(() => loadingFlags.isRegister);
 
 		const formOptions = {
 			fields: {
@@ -87,6 +96,7 @@ export default {
 
 		return {
 			formManager,
+			isLoading,
 			onSubmit
 		}
 	},

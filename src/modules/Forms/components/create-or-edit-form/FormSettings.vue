@@ -1,9 +1,13 @@
 <template>
 	<v-card class="px-5 py-5">
 		<v-row v-if="settings">
-			<v-col cols="12">
+			<!-- <v-col cols="12">
+				<div class="mb-3">
+					<h6 class="text-h6">
+						Представлення та публікація
+					</h6>
+				</div>
 				<div
-					v-if="settings.isTest"
 					class="pl-3"
 				>
 					<div class="mb-2">
@@ -29,9 +33,14 @@
 				</div>
 
 				<v-divider></v-divider>
-			</v-col>
+			</v-col> -->
 
 			<v-col cols="12">
+				<div class="mb-3">
+					<h6 class="text-h6">
+						Взаємодія з формою
+					</h6>
+				</div>
 				<div class="mb-2">
 					<div class="w-100 d-flex align-center justify-space-between mb-1">
 						<div class="w-100">
@@ -140,6 +149,7 @@
 					<v-text-field
 						style="max-width: 300px;"
 						label=""
+						color="primary"
 						variant="underlined"
 						:model-value="settings.confirmText"
 						@update:model-value="updateSettings('confirmText', $event)"

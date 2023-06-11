@@ -43,9 +43,9 @@
 						></v-checkbox-btn>
 
 						<v-text-field
-							label=""
+							placeholder="Своя відповідь"
 							variant="underlined"
-							color="primary"
+							:color="(showPointsAndAnswers || settingPoints) ? rightAnswersData[option.id].color : 'primary'"
 							hide-details
 							style="margin-top: -20px"
 							:readonly="isViewingAnswer"
@@ -89,10 +89,6 @@ export default {
 			default: () => false
 		},
 		showPointsAndAnswers: {
-			type: Boolean,
-			default: () => false
-		},
-		isCorrectAnswer: {
 			type: Boolean,
 			default: () => false
 		},

@@ -27,7 +27,7 @@
 			:class="(settingPoints || showPointsAndAnswers) ? `px-1 py-1 bg-${pointsData === 0 ? 'red-lighten-4' : 'green-lighten-4'}` : ''"
 		>
 			<v-textarea
-				label="Detailed answer"
+				label="Розгорнута відповідь"
 				variant="underlined"
 				hide-details
 				:color="(settingPoints || showPointsAndAnswers) ? (pointsData === 0 ? 'red' : 'green') : 'primary'"
@@ -54,10 +54,6 @@ export default {
 			default: () => false
 		},
 		showPointsAndAnswers: {
-			type: Boolean,
-			default: () => false
-		},
-		isCorrectAnswer: {
 			type: Boolean,
 			default: () => false
 		},

@@ -6,9 +6,16 @@ import { LOCAL_STORAGE_AUTH_ACCESS_TOKEN_KEY } from '@/config/clientStorageKeys'
 import { useAuthStore } from '../store/authStore';
 import { useApplicationStore } from '@/stores/applicationStore';
 
+import { reactive } from 'vue';
+
 export default function useAuth() {
 	const { setAuthAccessToken, setCurrentUser, setLoadingCurrentUser } = useAuthStore();
 	const { addErrorNotify, addSuccessNotify } = useApplicationStore();
+
+	const loadingFlags = reactive({
+		isLogin: false,
+		isRegister: false,
+	})
 
 	const tryAutoLogin = async () => {
 		const accessToken = clientStorageLocal.get(LOCAL_STORAGE_AUTH_ACCESS_TOKEN_KEY);
@@ -25,11 +32,15 @@ export default function useAuth() {
 			} catch (error) {}
 
 			setLoadingCurrentUser(false);
+		} else {
+			setLoadingCurrentUser(false);
 		}
 	}
 
 	const login = async ({ email, password }) => {
 		return new Promise((res, rej) => {
+			loadingFlags.isLogin = true;
+
 			ApiService.request('login', {
 				queryParams: {
 					email,
@@ -52,28 +63,42 @@ export default function useAuth() {
 
 					rej(error);
 				})
+				.finally(() => {
+					loadingFlags.isLogin = false;
+				})
 		})
 	};
 
 	const register = async ({ name, email, password }) => {
-		ApiService.request('register', {
-			data: {
-				name,
-				email,
-				password
-			}
-		})
-			.then(
-				({ token, user }) => {
+		return new Promise((res, rej) => {
+			loadingFlags.isRegister = true;
+
+			ApiService.request('register', {
+				data: {
+					name,
+					email,
+					password
+				}
+			})
+				.then(({ token, user }) => {
 					saveAuthTokens(token);
 					addSuccessNotify({
 						text: 'Регістрація успішна'
 					});
-				},
-				(error) => addErrorNotify({
-					text: error?.message || 'Регістрація не вдалася, спробуйте пізніше.'
+
+					res(user);
 				})
-			)
+				.catch((error) => {
+					addErrorNotify({
+						text: error?.message || 'Регістрація не вдалася, спробуйте пізніше.'
+					})
+
+					rej(error);
+				})
+				.finally(() => {
+					loadingFlags.isRegister = false;
+				})
+		})
 	};
 
 	const logout = () => {
@@ -92,6 +117,8 @@ export default function useAuth() {
 	};
 
 	return {
+		loadingFlags,
+
 		tryAutoLogin,
 		register,
 		login,

@@ -45,10 +45,10 @@
 
 		<template v-if="isCustomOptionAvailable">
 			<span>
-				&nbsp;or &nbsp;
+				&nbsp;або &nbsp;
 			</span>
 			<v-btn variant="tonal" @click="addOption(true)">
-				Добавити опцію "Власний варіант"
+				Додати опцію "Власний варіант"
 			</v-btn>
 		</template>
 	</div>
